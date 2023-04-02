@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: kandula-ingress
+  namespace: jenkins
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: kandula.lirondadon.link
+    http:
+      paths:
+      - backend:
+          service:
+            name: jenkins-svc
+            port:
+              number: 80
+        path: /jenkins
+        pathType: Exact
+      - backend:
+          service:
+            name: apache-svc
+            port:
+              number: 80
+        path: /app
+        pathType: Exact
