@@ -29,16 +29,16 @@ module "eks" {
       min_size     = 2
       max_size     = 6
       desired_size = 2
-      # instance_types = ["t3.medium"]
-      instance_types = ["t2.micro"]
+      instance_types = ["t3.medium"]
+      # instance_types = ["t2.micro"]
     }
 
     group_2 = {
       min_size     = 2
       max_size     = 6
       desired_size = 2
-      # instance_types = ["t3.large"]
-      instance_types = ["t2.micro"]
+      instance_types = ["t3.large"]
+      # instance_types = ["t2.micro"]
 
     }
   }

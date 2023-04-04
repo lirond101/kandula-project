@@ -17,12 +17,15 @@ kubectl wait --namespace ingress-nginx \
   --for=condition=ready pod \
   --selector=app.kubernetes.io/component=controller \
   --timeout=120s
+
 # Create jenkins and apache appications
 kubectl create -f jenkins-app.yaml
-kubectl create -f apache-app.yaml
+kubectl create -f jenkins-sa.yaml
 
+kubectl create namespace production
+kubectl create -f apache-app.yaml
 kubectl create -f kandula-ingress.yaml
 sleep 120
 
-INGRESS_LB_CNAME=$(kubectl get ingress jandula-ingress -o jsonpath="{.status.loadBalancer.ingress[0].hostname}")
+INGRESS_LB_CNAME=$(kubectl get ingress kandula-ingress -o jsonpath="{.status.loadBalancer.ingress[0].hostname}" -n production)
 echo $INGRESS_LB_CNAME

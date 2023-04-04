@@ -27,6 +27,9 @@ spec:
         - name: jnlpport
           containerPort: 50000
           protocol: TCP
+        env:
+        - name: JENKINS_OPTS
+          value: --prefix=/jenkins
         volumeMounts:
         - name: jenkins-home
           mountPath: /var/jenkins_home
