@@ -25,6 +25,7 @@ kubectl create -f jenkins-sa.yaml
 kubectl create namespace production
 kubectl create -f apache-app.yaml
 kubectl create -f kandula-ingress.yaml
+kubectl create -f devtools-ingress.yaml
 sleep 120
 
 INGRESS_LB_CNAME=$(kubectl get ingress kandula-ingress -o jsonpath="{.status.loadBalancer.ingress[0].hostname}" -n production)
