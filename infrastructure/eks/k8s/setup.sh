@@ -11,7 +11,7 @@ eksctl create iamidentitymapping \
     --no-duplicate-arns
 eksctl get iamidentitymapping --cluster $1 --region=us-east-1
 
-# Install NGINX ingress conroller 
+# # Install NGINX ingress conroller 
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.7.0/deploy/static/provider/aws/deploy.yaml
 kubectl wait --namespace ingress-nginx \
   --for=condition=ready pod \
@@ -19,14 +19,14 @@ kubectl wait --namespace ingress-nginx \
   --timeout=120s
 
 # Create jenkins and apache appications
-kubectl create -f jenkins-app.yaml
-kubectl create -f jenkins-sa.yaml
+kubectl apply -f jenkins-app.yaml
+kubectl apply -f jenkins-sa.yaml
 
-kubectl create namespace production
-kubectl create -f apache-app.yaml
-kubectl create -f kandula-ingress.yaml
-kubectl create -f devtools-ingress.yaml
+kubectl create namespace kandula
+kubectl apply -f kuar-app.yaml
+kubectl apply -f kuar-ingress.yaml
+kubectl apply -f devtools-ingress.yaml
 sleep 120
 
-INGRESS_LB_CNAME=$(kubectl get ingress kandula-ingress -o jsonpath="{.status.loadBalancer.ingress[0].hostname}" -n production)
+INGRESS_LB_CNAME=$(kubectl get ingress kuar-ingress -o jsonpath="{.status.loadBalancer.ingress[0].hostname}" -n kandula)
 echo $INGRESS_LB_CNAME
