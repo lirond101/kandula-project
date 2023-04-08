@@ -34,11 +34,11 @@ spec:
         - name: jenkins-home
           mountPath: /var/jenkins_home
       volumes:
-      # - name: jenkins-data
-      #   persistentVolumeClaim:
-      #     claimName: jenkins-pv-claim
       - name: jenkins-home
-        emptyDir: {}
+        persistentVolumeClaim:
+          claimName: jenkins-pv-claim
+      # - name: jenkins-home
+      #   emptyDir: {}
 
 
 ---
