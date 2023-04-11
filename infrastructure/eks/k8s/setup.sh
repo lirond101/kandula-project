@@ -20,17 +20,31 @@ kubectl wait --namespace ingress-nginx \
 
 # Configure ebs-csi and iam role for it
 eksctl create addon --name aws-ebs-csi-driver --cluster $1 --service-account-role-arn arn:aws:iam::902770729603:role/AmazonEKS_EBS_CSI_DriverRole --force
-eksctl create iamserviceaccount \
-  --name ebs-csi-controller-sa \
-  --namespace kube-system \
-  --cluster my-cluster \
-  --attach-policy-arn arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy \
-  --approve \
-  --role-only \
-  --role-name AmazonEKS_EBS_CSI_DriverRole
+# From scratch environment only - will fail if role exists 
+# eksctl create iamserviceaccount \
+#   --name ebs-csi-controller-sa \
+#   --namespace kube-system \
+#   --cluster opsschool-eks-e0tzHG4J \
+#   --attach-policy-arn arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy \
+#   --approve \
+#   --role-only \
+#   --role-name AmazonEKS_EBS_CSI_DriverRole
+
+# Alternative way to above command
+# aws eks create-addon --cluster-name $1 --addon-name aws-ebs-csi-driver \
+#   --service-account-role-arn arn:aws:iam::902770729603:role/AmazonEKS_EBS_CSI_DriverRole
+sleep 30
+
+
+# 1. Update manually the role trust relationship "AmazonEKS_EBS_CSI_DriverRole" with the current oidc provider.
+# 2. Run the following:
+kubectl annotate serviceaccount ebs-csi-controller-sa eks.amazonaws.com/role-arn=arn:aws:iam::902770729603:role/AmazonEKS_EBS_CSI_DriverRole -n kube-system
+kubectl rollout restart deployment ebs-csi-controller -n kube-system
 
 # Create jenkins and apache appications
+kubectl create namespace jenkins
 kubectl apply -f jenkins-sa.yaml
+kubectl apply -f jenkins-sa-secret.yaml
 kubectl apply -f jenkins-pv-claim.yaml
 kubectl apply -f jenkins-app.yaml
 

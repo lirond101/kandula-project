@@ -19,25 +19,25 @@ resource "kubernetes_service_account" "opsschool_sa" {
   depends_on = [module.eks]
 }
 
-resource "kubernetes_namespace" "jenkins_namespace" {
-  metadata {
-    name = "jenkins"
-  }
-}
+# resource "kubernetes_namespace" "jenkins_namespace" {
+#   metadata {
+#     name = "jenkins"
+#   }
+# }
 
-resource "kubernetes_secret" "sa_secret" {
-  metadata {
-    name = "sa-secret"
-  }
-}
+# resource "kubernetes_secret" "sa_secret" {
+#   metadata {
+#     name = "sa-secret"
+#   }
+# }
 
-resource "kubernetes_service_account" "jenkins_sa" {
-  metadata {
-    name      = "jenkins-admin"
-    namespace = "${kubernetes_namespace.jenkins_namespace.metadata.0.name}"
-  }
-  secret {
-    name = "${kubernetes_secret.sa_secret.metadata.0.name}"
-  }
-  depends_on = [module.eks]
-}
+# resource "kubernetes_service_account" "jenkins_sa" {
+#   metadata {
+#     name      = "jenkins-admin"
+#     namespace = "${kubernetes_namespace.jenkins_namespace.metadata.0.name}"
+#   }
+#   secret {
+#     name = "${kubernetes_secret.sa_secret.metadata.0.name}"
+#   }
+#   depends_on = [module.eks]
+# }
