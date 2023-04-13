@@ -1,5 +1,5 @@
 # Cleanup
-eksctl delete addon --cluster $1 --name aws-ebs-csi-driver --preserve
+eksctl delete addon --cluster $1 --region $2 --name aws-ebs-csi-driver --preserve
 kubectl delete -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.7.0/deploy/static/provider/aws/deploy.yaml
 
 kubectl delete -f kuar-app.yaml
