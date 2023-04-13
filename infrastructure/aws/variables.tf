@@ -2,13 +2,7 @@
 variable "aws_region" {
   type        = string
   description = "Region for AWS Resources"
-  default     = "us-east-1"
-}
-
-variable "naming_prefix" {
-  type        = string
-  description = "Naming prefix for resources"
-  default     = "kandula"
+  default     = "us-east-2"
 }
 
 variable "env_name" {
@@ -76,6 +70,11 @@ variable "ssh_base_path" {
   type        = string
   description = "Base path for referencing ssh files"
   default     = "~/.ssh/"
+}
+
+variable "vpc_cidr_block" {
+  type        = string
+  description = "Base CIDR Block for VPC"
 }
 
 variable "public_subnets" {
