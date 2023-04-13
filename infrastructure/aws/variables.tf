@@ -97,3 +97,8 @@ variable "s3_bucket_name" {
   description = "Name of the S3 bucket to create"
   default = "lirondadon-kandula"
 }
+
+variable "kubernetes_version" {
+  default = 1.24
+  description = "kubernetes version"
+}
