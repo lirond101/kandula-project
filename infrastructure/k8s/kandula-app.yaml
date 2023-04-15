@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kandula-app
+  namespace: kandula
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kandula-app
+  template:
+    metadata:
+      labels:
+        app: kandula-app
+    spec:
+      serviceAccountName: kandula-sa
+      containers:
+      - name: kandula
+        image: lirondadon/kandula:latest
+        ports:
+        - containerPort: 5000
+          name: http
+          protocol: TCP
+        env:
+        - name: FLASK_DEBUG
+          value: "1"
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kandula-svc
+  namespace: kandula
+  labels:
+spec:
+  ports:
+  - port: 5000
+    targetPort: 5000
+    protocol: TCP
+  selector:
+    app: kandula-app

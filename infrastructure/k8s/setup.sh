@@ -11,6 +11,8 @@ eksctl create iamidentitymapping \
     --no-duplicate-arns
 eksctl get iamidentitymapping --cluster $1 --region=$2
 
+# kubectl apply -f opsschool-sa.yaml
+
 # Install NGINX ingress conroller 
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.7.0/deploy/static/provider/aws/deploy.yaml
 kubectl wait --namespace ingress-nginx \
@@ -49,8 +51,8 @@ kubectl apply -f jenkins-pv-claim.yaml
 kubectl apply -f jenkins-app.yaml
 
 kubectl create namespace kandula
-kubectl apply -f kuar-app.yaml
-kubectl apply -f kuar-ingress.yaml
+kubectl apply -f kandula-app.yaml
+kubectl apply -f kandula-ingress.yaml
 kubectl apply -f devtools-ingress.yaml
 sleep 120
 

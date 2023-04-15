@@ -3,9 +3,10 @@ module "eks" {
   version         = "19.10.0"
   cluster_name    = local.cluster_name
   cluster_version = var.kubernetes_version
-  subnet_ids         = keys(module.my_vpc.vpc_public_subnets)
-  cluster_endpoint_private_access = false 
-  cluster_endpoint_public_access = true 
+  subnet_ids         = keys(module.my_vpc.vpc_private_subnets)
+
+  cluster_endpoint_private_access = false
+  cluster_endpoint_public_access = true
   
   enable_irsa = true
   
@@ -26,17 +27,17 @@ module "eks" {
   eks_managed_node_groups = {
     
     group_1 = {
-      min_size     = 2
+      min_size     = 0
       max_size     = 6
       desired_size = 2
       instance_types = ["t3.medium"]
     }
 
     group_2 = {
-      min_size     = 2
+      min_size     = 0
       max_size     = 6
       desired_size = 2
-      instance_types = ["t3.large"]
+      instance_types = ["t3.medium"]
     }
   }
 }

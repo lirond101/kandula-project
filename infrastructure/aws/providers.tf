@@ -29,11 +29,11 @@ terraform {
       version = "~> 2.2.0"
     }
   }
-  required_version = ">= 0.12"
+  required_version = ">= 1.1.0"
   # cloud {
   #   organization = "opsschool-lirondadon"
   #   workspaces {
-  #     name = "AWS-and-Terraform"
+  #     name = "Kandula"
   #   }
   # }
 }

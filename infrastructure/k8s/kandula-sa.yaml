@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: kandula-sa
+  namespace: kandula
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::902770729603:oidc-provider/oidc.eks.us-east-1.amazonaws.com/id/3D5BF810974CD4DC5CC3C0ADFB6F1F21

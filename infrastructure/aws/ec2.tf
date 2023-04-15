@@ -42,14 +42,14 @@
 #   user_data_nginx                  = templatefile("${path.module}/startup_script.tpl", {
 #                                       vpc_cidr_block = module.my_vpc.vpc_cidr_block
 #                                     })
-#   # db
-#   instance_count_db                = var.instance_count
-#   ami_db                           = data.aws_ami.ubuntu-18.id
-#   instance_type_db                 = var.instance_type
+# #   # db
+# #   instance_count_db                = var.instance_count
+# #   ami_db                           = data.aws_ami.ubuntu-18.id
+# #   instance_type_db                 = var.instance_type
 
 
 
-#   naming_prefix                    = "kandula"
+# #   naming_prefix                    = "kandula"
 #   common_tags                      = merge(local.common_tags, {
 #                                       Name = "${local.name_prefix}-ec2",
 #                                       Version = "v1.0.0"
