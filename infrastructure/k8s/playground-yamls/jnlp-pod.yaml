@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: jenkins
+  labels:
+    app: jnlp
+  name: jnlp
+spec:
+  serviceAccountName: jenkins-cluster-admin
+  containers:
+  # - name: jnlp
+  #   image: jenkins/inbound-agent
+  #   imagePullPolicy: IfNotPresent
+  #   resources: {}
+  - name: kubectl
+    image: lirondadon/kubectl:latest
+    tty: true
+    command: ['kubectl', 'get', 'deployments']
+    securityContext:
+      privileged: true
+    # volumeMounts:
+    #   - name: kubeconfig
+    #     mountPath: /.kube
+    #     subPath: .kube
+    command: ['sleep', '99999']
+  # - name: dind
+  #   image: docker:19.03.11-dind
+  #   securityContext:
+  #     privileged: true
+  #   tty: true
+  #   volumeMounts:
+  #     - name: docker-graph-storage
+  #       mountPath: /var/lib/docker
+  # volumes:
+  #   # - name: docker-graph-storage
+  #   #   emptyDir: {}
+  #   - name: kubeconfig
+  #     emptyDir: {}

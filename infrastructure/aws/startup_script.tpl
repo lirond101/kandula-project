@@ -1,6 +1,6 @@
-# #!/bin/bash
-# apt update
-# apt install nginx awscli -y
+#!/bin/bash
+apt update
+apt install awscli -y
 # # Welcome page changes-
 # sed -i "s/nginx/Grandpa's Whiskey $(hostname)/g" /var/www/html/index.nginx-debian.html
 # sed -i '15,23d' /var/www/html/index.nginx-debian.html
