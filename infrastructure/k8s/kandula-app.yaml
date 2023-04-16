@@ -13,7 +13,7 @@ spec:
       labels:
         app: kandula-app
     spec:
-      serviceAccountName: kandula-sa
+      serviceAccountName: opsschool-sa
       containers:
       - name: kandula
         image: lirondadon/kandula:latest

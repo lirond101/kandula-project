@@ -2,6 +2,7 @@ pipeline {
     
     environment {
         DOCKERHUB_CREDENTIALS = credentials('dockerhub.lirondadon')
+        BUILD_NUMBER = "${env.BUILD_ID}"
     }
     agent {
         kubernetes {
@@ -14,11 +15,19 @@ pipeline {
                     app: jnlp
                   name: jnlp
                 spec:
+                  serviceAccountName: jenkins-cluster-admin
                   containers:
                   - name: jnlp
                     image: jenkins/inbound-agent
                     imagePullPolicy: IfNotPresent
                     resources: {}
+                  - name: kubectl
+                    image: lirondadon/kubectl:latest
+                    securityContext:
+                      privileged: true
+                    command: ['sleep', '99999']
+                    tty: true
+                    imagePullPolicy: IfNotPresent
                   - name: dind
                     image: docker:19.03.11-dind
                     securityContext:
@@ -44,7 +53,6 @@ pipeline {
             steps {
                 container('dind') {
                     sh 'docker build --network=host -t lirondadon/kandula-test .'
-                    sh 'docker image ls'
                 }
             }
         }
@@ -58,17 +66,11 @@ pipeline {
             }
         }
         
-        stage('Deploying React.js container to Kubernetes') {
+        stage('Deploying kandula app to Kubernetes') {
             steps {
-                script {
-                    kubernetesDeploy(configs: "kuar-app.yaml")
-                }
-            }
-        }
-        post {
-            always {
-                container('dind') {
-                    sh 'docker logout'
+                container('kubectl') {
+                    // sh 'kubectl get deployments'
+                    sh 'kubectl apply -f kandula-app.yaml'
                 }
             }
         }
