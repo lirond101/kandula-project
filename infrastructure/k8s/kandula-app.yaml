@@ -24,6 +24,8 @@ spec:
         env:
         - name: FLASK_DEBUG
           value: "1"
+        - name: AWS_DEFAULT_REGION
+          value: "us-east-2"
 
 
 ---

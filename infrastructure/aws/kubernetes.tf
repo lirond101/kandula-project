@@ -18,3 +18,110 @@ resource "kubernetes_service_account" "opsschool_sa" {
   }
   depends_on = [module.eks]
 }
+
+# https://aws.amazon.com/blogs/containers/amazon-ebs-csi-driver-is-now-generally-available-in-amazon-eks-add-ons/ 
+data "aws_iam_policy" "ebs_csi_policy" {
+  arn = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
+}
+
+module "irsa-ebs-csi" {
+  source  = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
+  version = "4.7.0"
+
+  create_role                   = true
+  role_name                     = "AmazonEKSTFEBSCSIRole-${module.eks.cluster_name}"
+  provider_url                  = module.eks.oidc_provider
+  role_policy_arns              = [data.aws_iam_policy.ebs_csi_policy.arn]
+  oidc_fully_qualified_subjects = ["system:serviceaccount:kube-system:ebs-csi-controller-sa"]
+}
+
+resource "aws_eks_addon" "ebs-csi" {
+  cluster_name             = module.eks.cluster_name
+  addon_name               = "aws-ebs-csi-driver"
+  addon_version            = "v1.5.2-eksbuild.1"
+  service_account_role_arn = module.irsa-ebs-csi.iam_role_arn
+  tags = {
+    "eks_addon" = "ebs-csi"
+    "terraform" = "true"
+  }
+}
+
+resource "kubernetes_namespace" "kandula_namespace" {
+  metadata {
+    name = "kandula"
+  }
+}
+
+resource "kubernetes_deployment" "kandula_deployment" {
+  metadata {
+    name = "kandula-app"
+    namespace = "kandula"
+    labels = {
+      app = "kandula-app"
+    }
+  }
+
+  spec {
+    replicas = 1
+
+    selector {
+      match_labels = {
+        app = "kandula-app"
+      }
+    }
+
+    template {
+      metadata {
+        labels = {
+          app = "kandula-app"
+        }
+      }
+
+      spec {
+        service_account_name = "opsschool-sa"
+
+        container {
+          image = "lirondadon/kandula:latest"
+          name  = "kandula"
+
+          port {
+            container_port = 5000
+            name = "http"
+            protocol = "TCP"
+          }
+
+          env {
+            name = "FLASK_DEBUG"
+            value = "1"
+          }
+
+          env {
+            name = "AWS_DEFAULT_REGION"
+            value = "us-east-2"
+          }
+
+          resources {
+            limits = {
+              cpu    = "0.5"
+              memory = "512Mi"
+            }
+            requests = {
+              cpu    = "250m"
+              memory = "50Mi"
+            }
+          }
+
+          liveness_probe {
+            http_get {
+              path = "/health"
+              port = 5000
+            }
+
+            initial_delay_seconds = 3
+            period_seconds        = 3
+          }
+        }
+      }
+    }
+  }
+}
