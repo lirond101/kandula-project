@@ -19,7 +19,7 @@ spec:
       serviceAccountName: jenkins-cluster-admin
       containers:
       - name: jenkins
-        image: jenkins/jenkins:lts-jdk11
+        image: lirondadon/my-jenkins:latest
         ports:
         - name: httpport
           containerPort: 8080
@@ -27,6 +27,22 @@ spec:
         - name: jnlpport
           containerPort: 50000
           protocol: TCP
+        # livenessProbe:
+        #   httpGet:
+        #     path: "/login"
+        #     port: 8080
+        #   initialDelaySeconds: 240
+        #   periodSeconds: 10
+        #   timeoutSeconds: 5
+        #   failureThreshold: 5
+        # readinessProbe:
+        #   httpGet:
+        #     path: "/login"
+        #     port: 8080
+        #   initialDelaySeconds: 180
+        #   periodSeconds: 10
+        #   timeoutSeconds: 5
+        #   failureThreshold: 3
         env:
         - name: JENKINS_OPTS
           value: --prefix=/jenkins
@@ -37,8 +53,6 @@ spec:
       - name: jenkins-home
         persistentVolumeClaim:
           claimName: jenkins-pv-claim
-      # - name: jenkins-home
-      #   emptyDir: {}
 
 
 ---

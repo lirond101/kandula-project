@@ -9,6 +9,7 @@ resource "aws_instance" "bastion" {
   instance_type               = var.instance_type
   subnet_id                   = keys(var.vpc_public_subnets)[count.index]
   vpc_security_group_ids      = [aws_security_group.bastion_sg.id]
+  key_name                    = var.key_name
   associate_public_ip_address = "true"
 
   root_block_device {
@@ -42,7 +43,8 @@ resource "aws_instance" "consul_server" {
   vpc_security_group_ids      = [aws_security_group.consul_sg.id]
   key_name                    = var.key_name
   iam_instance_profile        = var.iam_instance_profile_consul
-  user_data                   = var.user_data_consul
+  # user_data                   = var.user_data_consul
+  user_data                   = file("${path.module}/scripts/consul-server.sh")
 
   root_block_device {
     encrypted   = false
@@ -58,7 +60,8 @@ resource "aws_instance" "consul_server" {
   }
   
   tags = merge(var.common_tags, {
-    Name = "${var.name_prefix}-consul-${count.index+1}"
+    Name = "opsschool-server"
+    consul_server = "true"
   }) 
 }
 

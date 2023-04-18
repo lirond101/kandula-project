@@ -109,8 +109,20 @@ resource "kubernetes_deployment" "kandula_deployment" {
               path = "/health"
               port = 5000
             }
-            initial_delay_seconds = 3
-            period_seconds        = 3
+            initial_delay_seconds = 90
+            period_seconds        = 10
+            timeout_seconds       = 5
+            failure_threshold     = 5
+          }
+          readiness_probe {
+            http_get {
+              path = "/health"
+              port = 5000
+            }
+            initial_delay_seconds = 60
+            period_seconds        = 10
+            timeout_seconds       = 5
+            failure_threshold     = 3
           }
         }
       }
