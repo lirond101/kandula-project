@@ -30,16 +30,14 @@ module "my_ec2" {
   # bastion
   instance_count_bastion             = length(var.public_subnets)
   ami_bastion                        = nonsensitive(data.aws_ssm_parameter.ami.value)
-  bastion_allowed_cidr_blocks        = ["79.182.179.3/32"]
+  bastion_allowed_cidr_blocks        = ["54.234.222.46/32"]
 
-  # consul
-  instance_count_consul             = 6
-  ami_consul                        = data.aws_ami.ubuntu-18.id
+  # consul server
+  instance_count_consul             = var.instance_count_consul_servers
+  ami_consul                        = lookup(var.ubuntu_18_region_based_ami, var.aws_region)
   iam_instance_profile_consul       = aws_iam_instance_profile.instance_profile.name
   key_name                         = var.key_name
-  user_data_consul                  = templatefile("${path.module}/startup_script.tpl", {
-                                      vpc_cidr_block = module.my_vpc.vpc_cidr_block
-                                    })
+  user_data_consul                  = file("${path.module}/scripts/consul-server.sh")
 
   name_prefix          = local.name_prefix
   common_tags                      = {}

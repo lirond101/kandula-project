@@ -68,3 +68,16 @@ variable "common_tags" {
   description = "Map of tags to be applied to all resources"
   default     = {}
 }
+
+variable "ubuntu_18_region_based_ami" {
+  description = "ami (ubuntu 18) to use - based on region"
+  default = {
+    "us-east-1" = "ami-00ddb0e5626798373"
+    "us-east-2" = "ami-0dd9f0e7df0f0a138"
+  }
+}
+
+variable "instance_count_consul_servers" {
+  default = 3
+  description = "Number of Consul servers"
+}

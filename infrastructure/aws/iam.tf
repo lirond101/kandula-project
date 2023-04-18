@@ -1,6 +1,6 @@
 # EC2 config
-resource "aws_iam_role" "allow_instance_ec2" {
-  name = "allow_all_ec2"
+resource "aws_iam_role" "allow_instance_describe_ec2" {
+  name = "allow_describe_ec2"
 
   assume_role_policy = <<EOF
 {
@@ -19,19 +19,19 @@ resource "aws_iam_role" "allow_instance_ec2" {
 EOF
 
   tags = merge(var.common_tags, {
-    Name = "${local.name_prefix}-allow_instance_ec2_role"
+    Name = "${local.name_prefix}-allow_instance_describe_ec2_role"
   })
 
 }
 
 resource "aws_iam_instance_profile" "instance_profile" {
   name = "instance_profile"
-  role = aws_iam_role.allow_instance_ec2.name
+  role = aws_iam_role.allow_instance_describe_ec2.name
 }
 
-resource "aws_iam_role_policy" "allow_ec2_all" {
+resource "aws_iam_role_policy" "describe_ec2" {
   name = "allow_all_ec2"
-  role = aws_iam_role.allow_instance_ec2.name
+  role = aws_iam_role.allow_instance_describe_ec2.name
 
   policy = <<EOF
 {
@@ -39,7 +39,7 @@ resource "aws_iam_role_policy" "allow_ec2_all" {
   "Statement": [
     {
       "Action": [
-        "ec2:*"
+        "ec2:DescribeInstances"
       ],
       "Effect": "Allow",
       "Resource": "*"

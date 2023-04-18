@@ -36,11 +36,6 @@ variable "instance_count_consul" {
   description = "Number of consul instances to create in VPC"
 }
 
-# variable "instance_count_db" {
-#   type        = number
-#   description = "Number of db instances to create in VPC"
-# }
-
 variable "root_disk_size_bastion" {
   description = "The size of the root disk"
   default     = 20
