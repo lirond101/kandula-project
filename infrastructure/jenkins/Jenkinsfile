@@ -52,7 +52,7 @@ pipeline {
         stage('Building Image') {
             steps {
                 container('dind') {
-                    sh 'docker build --network=host -t lirondadon/kandula-test .'
+                    sh 'docker build --network=host -t lirondadon/kandula .'
                 }
             }
         }
