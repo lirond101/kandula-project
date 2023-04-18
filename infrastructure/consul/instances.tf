@@ -35,17 +35,49 @@ resource "aws_instance" "consul_agent" {
   subnet_id                   = "subnet-0a6e0daf69de7b73b"
   iam_instance_profile   = aws_iam_instance_profile.consul-join.name
   vpc_security_group_ids = [aws_security_group.opsschool_consul.id]
-  user_data            = "/home/ubuntu/consul-agent.sh"  
-  provisioner "file" {
-    source      = "scripts/consul-agent.sh"
-    destination = "/home/ubuntu/consul-agent.sh"
+  # user_data            = "/home/ubuntu/consul-agent.sh"
+  user_data              = file("${path.module}/scripts/consul-agent.sh")
+  
+  # provisioner "file" {
+  #   source      = "scripts/consul-agent.sh"
+  #   destination = "/home/ubuntu/consul-agent.sh"
 
-    connection {   
-      host        = self.private_ip
-      user        = "ubuntu"
-      private_key = file(var.pem_key_name)      
-    }   
+  #   connection {   
+  #     host        = self.private_ip
+  #     user        = "ubuntu"
+  #     private_key = file(var.pem_key_name)      
+  #   }   
+  # }
+
+
+  tags = {
+    Name = "opsschool-agent"
   }
+
+
+}
+
+resource "aws_instance" "consul_agent2" {
+
+  ami           = lookup(var.ami, var.region)
+  instance_type = "t2.micro"
+  key_name      = aws_key_pair.opsschool_consul_key.key_name
+  subnet_id                   = "subnet-0a6e0daf69de7b73b"
+  iam_instance_profile   = aws_iam_instance_profile.consul-join.name
+  vpc_security_group_ids = [aws_security_group.opsschool_consul.id]
+  # user_data            = "/home/ubuntu/consul-agent.sh"
+  user_data              = file("${path.module}/scripts/consul-agent.sh")
+  
+  # provisioner "file" {
+  #   source      = "scripts/consul-agent.sh"
+  #   destination = "/home/ubuntu/consul-agent.sh"
+
+  #   connection {   
+  #     host        = self.private_ip
+  #     user        = "ubuntu"
+  #     private_key = file(var.pem_key_name)      
+  #   }   
+  # }
 
 
   tags = {

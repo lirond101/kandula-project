@@ -1,15 +1,15 @@
 # echo "### Update kubeconfig with cluster name $1"
-# aws eks --region=$2 update-kubeconfig --name $1
+aws eks --region=$2 update-kubeconfig --name $1
 
-# echo "### Add employee2 to configmap 'aws-auth'"
-# eksctl get iamidentitymapping --cluster $1 --region=$2
-# eksctl create iamidentitymapping \
-#     --cluster $1 \
-#     --region=$2 \
-#     --arn arn:aws:iam::902770729603:user/employee2 \
-#     --group system:masters \
-#     --no-duplicate-arns
-# eksctl get iamidentitymapping --cluster $1 --region=$2
+echo "### Add employee2 to configmap 'aws-auth'"
+eksctl get iamidentitymapping --cluster $1 --region=$2
+eksctl create iamidentitymapping \
+    --cluster $1 \
+    --region=$2 \
+    --arn arn:aws:iam::902770729603:user/employee2 \
+    --group system:masters \
+    --no-duplicate-arns
+eksctl get iamidentitymapping --cluster $1 --region=$2
 
 # # kubectl apply -f opsschool-sa.yaml
 
@@ -51,7 +51,7 @@ kubectl apply -f jenkins-pv-claim.yaml
 kubectl apply -f jenkins-app.yaml
 
 # kubectl create namespace kandula
-kubectl apply -f kandula-app.yaml
+# kubectl apply -f kandula-app.yaml
 kubectl apply -f kandula-ingress.yaml
 kubectl apply -f devtools-ingress.yaml
 sleep 120

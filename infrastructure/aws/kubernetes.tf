@@ -60,7 +60,6 @@ resource "kubernetes_deployment" "kandula_deployment" {
       app = "kandula-app"
     }
   }
-
   spec {
     replicas = 1
 
@@ -69,14 +68,12 @@ resource "kubernetes_deployment" "kandula_deployment" {
         app = "kandula-app"
       }
     }
-
     template {
       metadata {
         labels = {
           app = "kandula-app"
         }
       }
-
       spec {
         service_account_name = "opsschool-sa"
 
@@ -89,17 +86,14 @@ resource "kubernetes_deployment" "kandula_deployment" {
             name = "http"
             protocol = "TCP"
           }
-
           env {
             name = "FLASK_DEBUG"
             value = "1"
           }
-
           env {
             name = "AWS_DEFAULT_REGION"
             value = "us-east-2"
           }
-
           resources {
             limits = {
               cpu    = "0.5"
@@ -110,18 +104,34 @@ resource "kubernetes_deployment" "kandula_deployment" {
               memory = "50Mi"
             }
           }
-
           liveness_probe {
             http_get {
               path = "/health"
               port = 5000
             }
-
             initial_delay_seconds = 3
             period_seconds        = 3
           }
         }
       }
     }
+  }
+}
+
+resource "kubernetes_service" "kandula-svc" {
+  metadata {
+    name = "kandula-svc"
+    namespace = "kandula"
+  }
+  spec {
+    selector = {
+      app = "kandula-app"
+    }
+    port {
+      port        = 5000
+      target_port = 5000
+      protocol = "TCP"
+    }
+    type = "ClusterIP"
   }
 }
