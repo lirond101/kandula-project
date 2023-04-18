@@ -61,7 +61,7 @@ pipeline {
             steps {
                 container('dind') {
                     sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
-                    sh 'docker push lirondadon/kandula-test:latest'
+                    sh 'docker push lirondadon/kandula:latest'
                 }
             }
         }
