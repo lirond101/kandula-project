@@ -29,7 +29,7 @@ variable "key_name" {
 variable "ssh_base_path" {
   type        = string
   description = "Base path for referencing ssh files"
-  default     = "~/.ssh/"
+  default     = "/home/ec2-user/.ssh"
 }
 
 variable "vpc_cidr_block" {
@@ -78,6 +78,6 @@ variable "ubuntu_18_region_based_ami" {
 }
 
 variable "instance_count_consul_servers" {
-  default = 3
+  default = 6
   description = "Number of Consul servers"
 }
