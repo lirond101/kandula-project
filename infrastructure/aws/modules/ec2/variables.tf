@@ -20,33 +20,20 @@ variable "vpc_private_subnets" {
 }
 
 #INSTANCES vars
-variable "instance_type_bastion" {
+variable "instance_type" {
   type        = string
   description = "Type for EC2 Instance"
   default     = "t2.micro"
 }
 
-variable "instance_type_nginx" {
-  type        = string
-  description = "Type for EC2 Instance"
-  default     = "t2.micro"
-}
-
-variable "instance_type_db" {
-  type        = string
-  description = "Type for EC2 Instance"
-  default     = "t2.micro"
-}
-
-variable "instance_count_nginx" {
+variable "instance_count_bastion" {
   type        = number
-  description = "Number of nginx instances to create in VPC"
-  default     = 2
+  description = "Number of bastion instances to create in VPC"
 }
 
-variable "instance_count_db" {
+variable "instance_count_consul" {
   type        = number
-  description = "Number of db instances to create in VPC"
+  description = "Number of consul instances to create in VPC"
 }
 
 variable "root_disk_size_bastion" {
@@ -54,22 +41,22 @@ variable "root_disk_size_bastion" {
   default     = 20
 }
 
-variable "root_disk_size_nginx" {
-  description = "The size of the root disk"
-  default     = 10
-}
-
 variable "encrypted_disk_size_bastion" {
   description = "The size of the secondary encrypted disk"
   default     = 20
 }
 
-variable "encrypted_disk_size_nginx" {
+variable "root_disk_size_consul" {
+  description = "The size of the root disk"
+  default     = 10
+}
+
+variable "encrypted_disk_size_consul" {
   description = "The size of the secondary encrypted disk"
   default     = 10
 }
 
-variable "encrypted_disk_device_name_nginx" {
+variable "encrypted_disk_device_name" {
   description = "The name of the device of secondary encrypted disk"
   type        = string
   default     = "xvdh"
@@ -80,37 +67,27 @@ variable "volumes_type" {
   default     = "gp2"
 }
 
-variable "ubuntu_account_number" {
-  default = "099720109477"
-  type    = string
-}
-
 variable "key_name" {
   type        = string
   description = "key variable for refrencing"
 }
 
-variable "user_data_nginx" {
-  type        = string
-  description = "user_data for launching nginx"
-}
+# variable "user_data_consul" {
+#   type        = string
+#   description = "user_data for launching consul"
+# }
 
 variable "ami_bastion" {
   type        = string
   description = "ami of bastion instance"
 }
 
-variable "ami_nginx" {
+variable "ami_consul" {
   type        = string
-  description = "ami of nginx instance"
+  description = "ami of consul instance"
 }
 
-variable "ami_db" {
-  type        = string
-  description = "ami of db instance"
-}
-
-variable "iam_instance_profile_nginx" {
+variable "iam_instance_profile_consul" {
   type        = string
   description = "iam instance profile"
 }
@@ -120,9 +97,9 @@ variable "bastion_allowed_cidr_blocks" {
   description = "allowed cidr blocks to connect bastion host from"
 }
 
-variable "naming_prefix" {
+variable "name_prefix" {
   type        = string
-  description = "Naming prefix for resources"
+  description = "Name prefix for resources"
 }
 
 variable "common_tags" {

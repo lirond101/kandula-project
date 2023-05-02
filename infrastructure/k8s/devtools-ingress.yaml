@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: devtools-ingress
+  namespace: jenkins
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: "/jenkins"
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      rewrite ^(/jenkins)$ http://$best_http_host$1/ permanent;
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: devtools.lirondadon.link
+    http:
+      paths:
+      - backend:
+          service:
+            name: jenkins-svc
+            port:
+              number: 80
+        path: /jenkins
+        pathType: Exact

@@ -1,0 +1,27 @@
+# ---
+# apiVersion: storage.k8s.io/v1
+# kind: StorageClass
+# metadata:
+#   labels:
+#     k8s-addon: storage-aws.addons.k8s.io
+#   name: encrypted-gp
+# parameters:
+#   type: gp2
+#   encrypted: "true"
+# provisioner: ebs.csi.aws.com
+# # Uncomment the following for multi zone clusters
+# volumeBindingMode: WaitForFirstConsumer
+# reclaimPolicy: Delete
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: jenkins-pv-claim
+  namespace: jenkins
+spec:
+  storageClassName: gp2
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi

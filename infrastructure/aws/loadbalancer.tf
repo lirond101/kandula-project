@@ -20,7 +20,7 @@ resource "aws_lb_target_group" "alb_target_group" {
   vpc_id   = module.my_vpc.vpc_id
 
   health_check {
-    path                = "/"
+    path                = "/ui"
     port                = 80
     healthy_threshold   = 6
     unhealthy_threshold = 2
@@ -52,10 +52,10 @@ resource "aws_lb_target_group_attachment" "alb_target_group_attachment" {
   depends_on = [
     module.my_ec2,
   ]
-  count            = var.instance_count
+  count            = var.instance_count_consul_servers
   target_group_arn = aws_lb_target_group.alb_target_group.arn
-  target_id        = module.my_ec2.aws_nginx_id[count.index]
-  port             = 80
+  target_id        = module.my_ec2.aws_consul_ids[count.index]
+  port             = 8500
 }
 
 # ALB Security Group

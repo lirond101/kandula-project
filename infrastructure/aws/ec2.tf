@@ -1,7 +1,7 @@
 # DATA
 data "aws_ami" "ubuntu-18" {
   most_recent = true
-  owners      = [var.ubuntu_account_number]
+  owners      = ["099720109477"]
 
   filter {
     name   = "name"
@@ -28,30 +28,18 @@ module "my_ec2" {
   vpc_private_subnets                = module.my_vpc.vpc_private_subnets
 
   # bastion
-  ami_bastion                        = nonsensitive(data.aws_ssm_parameter.ami.value)
-  instance_type_bastion              = var.instance_type
-  bastion_allowed_cidr_blocks        = ["79.182.181.105/32"]
+  instance_count_bastion             = length(var.public_subnets)
+  # ami_bastion                        = nonsensitive(data.aws_ssm_parameter.ami.value)
+  ami_bastion                        = "ami-0103f211a154d64a6"
+  bastion_allowed_cidr_blocks        = ["18.209.16.108/32"]
 
-  # nginx
-  instance_count_nginx             = var.instance_count
-  ami_nginx                        = data.aws_ami.ubuntu-18.id
-  instance_type_nginx              = var.instance_type
-  iam_instance_profile_nginx       = aws_iam_instance_profile.instance_profile.name
-  encrypted_disk_device_name_nginx = var.nginx_encrypted_disk_device_name
-  key_name                         = var.key_name
-  user_data_nginx                  = templatefile("${path.module}/startup_script.tpl", {
-                                      vpc_cidr_block = module.my_vpc.vpc_cidr_block
-                                    })
-  # db
-  instance_count_db                = var.instance_count
-  ami_db                           = data.aws_ami.ubuntu-18.id
-  instance_type_db                 = var.instance_type
+  # consul server
+  instance_count_consul             = var.instance_count_consul_servers
+  ami_consul                        = lookup(var.ubuntu_18_region_based_ami, var.aws_region)
+  iam_instance_profile_consul       = aws_iam_instance_profile.instance_profile.name
+  key_name                          = var.key_name
+  # user_data_consul                = file("${path.module}/scripts/consul-server.sh")
 
-
-
-  naming_prefix                    = "kandula"
-  common_tags                      = merge(local.common_tags, {
-                                      Name = "${local.name_prefix}-ec2",
-                                      Version = "v1.0.0"
-                                    })
+  name_prefix                       = local.name_prefix
+  common_tags                       = local.common_tags
 }

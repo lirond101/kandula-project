@@ -2,68 +2,22 @@
 variable "aws_region" {
   type        = string
   description = "Region for AWS Resources"
-  default     = "us-east-1"
-}
-
-variable "naming_prefix" {
-  type        = string
-  description = "Naming prefix for resources"
-  default     = "kandula"
 }
 
 variable "env_name" {
   type        = string
   description = "Name of environment it run on"
-  default     = "production"
-}
-
-variable "instance_type" {
-  type        = string
-  description = "Type for EC2 Instance"
-  default     = "t2.micro"
-}
-
-variable "instance_count" {
-  type        = number
-  description = "Number of instances to create in VPC"
-  default     = 2
-}
-
-variable "nginx_root_disk_size" {
-  description = "The size of the root disk"
-  default     = 10
-}
-
-variable "nginx_encrypted_disk_size" {
-  description = "The size of the secondary encrypted disk"
-  default     = 10
-}
-
-variable "nginx_encrypted_disk_device_name" {
-  description = "The name of the device of secondary encrypted disk"
-  default     = "xvdh"
-  type        = string
-}
-
-variable "volumes_type" {
-  description = "The type of all the disk instances in my project"
-  default     = "gp2"
 }
 
 variable "company" {
   type        = string
   description = "Company name for resource tagging"
-  default     = "Opsschool"
+  default     = "opsschool"
 }
 
 variable "project" {
   type        = string
   description = "Project name for resource tagging"
-}
-
-variable "ubuntu_account_number" {
-  default = "099720109477"
-  type    = string
 }
 
 variable "key_name" {
@@ -75,7 +29,12 @@ variable "key_name" {
 variable "ssh_base_path" {
   type        = string
   description = "Base path for referencing ssh files"
-  default     = "~/.ssh/"
+  default     = "/home/ec2-user/.ssh"
+}
+
+variable "vpc_cidr_block" {
+  type        = string
+  description = "Base CIDR Block for VPC"
 }
 
 variable "public_subnets" {
@@ -96,5 +55,29 @@ variable "availability_zone" {
 variable "s3_bucket_name" {
   type = string
   description = "Name of the S3 bucket to create"
-  default = "lirondadon-kandula"
+  default = "kandula9-lirondadon"
+}
+
+variable "kubernetes_version" {
+  default = 1.24
+  description = "kubernetes version"
+}
+
+variable "common_tags" {
+  type        = map(string)
+  description = "Map of tags to be applied to all resources"
+  default     = {}
+}
+
+variable "ubuntu_18_region_based_ami" {
+  description = "ami (ubuntu 18) to use - based on region"
+  default = {
+    "us-east-1" = "ami-00ddb0e5626798373"
+    "us-east-2" = "ami-0dd9f0e7df0f0a138"
+  }
+}
+
+variable "instance_count_consul_servers" {
+  default = 6
+  description = "Number of Consul servers"
 }

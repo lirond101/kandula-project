@@ -1,6 +1,6 @@
 # EC2 config
-resource "aws_iam_role" "allow_instance_ec2" {
-  name = "allow_all_ec2"
+resource "aws_iam_role" "allow_instance_describe_ec2" {
+  name = "allow_describe_ec2"
 
   assume_role_policy = <<EOF
 {
@@ -18,20 +18,20 @@ resource "aws_iam_role" "allow_instance_ec2" {
 }
 EOF
 
-  tags = merge(local.common_tags, {
-    Version = "1.0.0"
+  tags = merge(var.common_tags, {
+    Name = "${local.name_prefix}-allow_instance_describe_ec2_role"
   })
 
 }
 
 resource "aws_iam_instance_profile" "instance_profile" {
   name = "instance_profile"
-  role = aws_iam_role.allow_instance_ec2.name
+  role = aws_iam_role.allow_instance_describe_ec2.name
 }
 
-resource "aws_iam_role_policy" "allow_ec2_all" {
+resource "aws_iam_role_policy" "describe_ec2" {
   name = "allow_all_ec2"
-  role = aws_iam_role.allow_instance_ec2.name
+  role = aws_iam_role.allow_instance_describe_ec2.name
 
   policy = <<EOF
 {
@@ -39,7 +39,7 @@ resource "aws_iam_role_policy" "allow_ec2_all" {
   "Statement": [
     {
       "Action": [
-        "ec2:*"
+        "ec2:DescribeInstances"
       ],
       "Effect": "Allow",
       "Resource": "*"
@@ -48,4 +48,14 @@ resource "aws_iam_role_policy" "allow_ec2_all" {
 }
 EOF
 
+}
+
+module "iam_iam-assumable-role-with-oidc" {
+  source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
+  version                       = "5.13.0"
+  create_role                   = true
+  role_name                     = "opsschool-role"
+  provider_url                  = replace(module.eks.cluster_oidc_issuer_url, "https://", "")
+  role_policy_arns              = ["arn:aws:iam::aws:policy/AmazonEC2FullAccess"]
+  oidc_fully_qualified_subjects = ["system:serviceaccount:${local.k8s_service_account_namespace}:${local.k8s_service_account_name}"]
 }

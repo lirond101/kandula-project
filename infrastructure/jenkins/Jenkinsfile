@@ -1,0 +1,78 @@
+pipeline {
+    
+    environment {
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub.lirondadon')
+        BUILD_NUMBER = "${env.BUILD_ID}"
+    }
+    agent {
+        kubernetes {
+            yaml '''
+                apiVersion: v1
+                kind: Pod
+                metadata:
+                  namespace: jenkins
+                  labels:
+                    app: jnlp
+                  name: jnlp
+                spec:
+                  serviceAccountName: jenkins-cluster-admin
+                  containers:
+                  - name: jnlp
+                    image: jenkins/inbound-agent
+                    imagePullPolicy: IfNotPresent
+                    resources: {}
+                  - name: kubectl
+                    image: lirondadon/kubectl:latest
+                    securityContext:
+                      privileged: true
+                    command: ['sleep', '99999']
+                    tty: true
+                    imagePullPolicy: IfNotPresent
+                  - name: dind
+                    image: docker:19.03.11-dind
+                    securityContext:
+                      privileged: true
+                    tty: true
+                    volumeMounts:
+                      - name: docker-graph-storage
+                        mountPath: /var/lib/docker
+                  volumes:
+                    - name: docker-graph-storage
+                      emptyDir: {}   
+                '''
+        }
+    }
+    stages {
+        stage('Clone') {
+            steps {
+                git branch: 'mid-project', credentialsId: 'github.integration', url: 'git@github.com:lirond101/kandula-app-9.git'
+            }
+        }
+        
+        stage('Building Image') {
+            steps {
+                container('dind') {
+                    sh 'docker build --network=host -t lirondadon/kandula .'
+                }
+            }
+        }
+        
+        stage('Pushing Image') {
+            steps {
+                container('dind') {
+                    sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+                    sh 'docker push lirondadon/kandula:latest'
+                }
+            }
+        }
+        
+        stage('Deploying kandula app to Kubernetes') {
+            steps {
+                container('kubectl') {
+                    // sh 'kubectl get deployments'
+                    sh 'kubectl apply -f kandula-app.yaml'
+                }
+            }
+        }
+    }
+}
