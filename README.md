@@ -22,7 +22,7 @@ The project is mainly built from terraform files and few more provisioning files
    ```
    *eks-cluster-name you will see as output of success terraform run.
 5. Update domain registar with the CNAME value of your ingress output.
-6.. Configure Jenkins
+6. Configure Jenkins
     6.1. Go to http://<your-domain>/jenkins.
     6.2. Add admin username and password.
     6.3. Configure k8s cloud - (k8s plugin for jenkins is already installed see here for installed plugins - https://github.com/lirond101/kandula-project/blob/vpc/infrastructure/jenkins/controller/jenkins-plugins.txt)
@@ -34,3 +34,10 @@ The project is mainly built from terraform files and few more provisioning files
         6.4.2. Github - SSH key - generate key pair and store here its private part and on Github at SSH and GPG store the public part.
             6.4.2.1 - Go to global credentials and update the github known keys - I prefer to choose "provide it manually" and put there the response of $ ssh-keyscan github.com
 7. Go to http://your-domain>/ and enjoy with kandula.
+8. ## SSH
+```shell script
+   $ chmod 400 your_aws_ec2_key.pem
+   $ ssh-add -k ~/.ssh/your_aws_ec2_key.pem
+   $ ssh -A <user>@<bastion-ip>
+   @ ssh <user>@<private-instance-ip>
+   ```
