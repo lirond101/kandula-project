@@ -81,3 +81,8 @@ variable "instance_count_consul_servers" {
   default = 6
   description = "Number of Consul servers"
 }
+
+variable "bastion_allowed_cidr_blocks" {
+  type = list
+  description = "Allow these cidr blocks, seperated by comma"
+}

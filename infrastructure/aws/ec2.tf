@@ -30,8 +30,10 @@ module "my_ec2" {
   # bastion
   instance_count_bastion             = length(var.public_subnets)
   # ami_bastion                        = nonsensitive(data.aws_ssm_parameter.ami.value)
-  ami_bastion                        = "ami-0103f211a154d64a6"
-  bastion_allowed_cidr_blocks        = ["18.209.16.108/32"]
+  # ami_bastion                        = "ami-0103f211a154d64a6"
+  # bastion_allowed_cidr_blocks        = ["18.209.16.108/32"]
+  bastion_allowed_cidr_blocks        = var.bastion_allowed_cidr_blocks
+
 
   # consul server
   instance_count_consul             = var.instance_count_consul_servers

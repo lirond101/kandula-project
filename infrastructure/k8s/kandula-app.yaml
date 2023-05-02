@@ -1,8 +1,10 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: kandula-app
+  name: kandula-deployment
   namespace: kandula
+  labels:
+    app: kandula-app
 spec:
   replicas: 1
   selector:
@@ -16,7 +18,7 @@ spec:
       serviceAccountName: opsschool-sa
       containers:
       - name: kandula
-        image: lirondadon/kandula:latest
+        image: lirondadon/kandula:1.0.0
         ports:
         - containerPort: 5000
           name: http
@@ -26,6 +28,13 @@ spec:
           value: "1"
         - name: AWS_DEFAULT_REGION
           value: "us-east-2"
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
         livenessProbe:
           httpGet:
             path: /health
