@@ -12,7 +12,8 @@ data "aws_availability_zones" "available" {}
 
 # vpc
 module "my_vpc" {
-  source  = "../modules/vpc"
+  source  = "app.terraform.io/opsschool-lirondadon/vpc/aws"
+  version = "1.0.1"
 
   vpc_cidr_block       = var.vpc_cidr_block
   availability_zone    = var.availability_zone
@@ -24,6 +25,8 @@ module "my_vpc" {
   common_tags = {
     "kubernetes.io/cluster/${local.cluster_name}" = "shared"
   }
+
+  # common_tags = {}
 
   public_subnet_tags = {
     "kubernetes.io/role/elb"                      = "1"

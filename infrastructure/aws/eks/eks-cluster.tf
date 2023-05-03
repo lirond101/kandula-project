@@ -50,15 +50,7 @@ module "eks" {
       min_size     = 0
       max_size     = 6
       desired_size = 2
-      instance_types = ["t3.medium"]
+      instance_types = ["t3.large"]
     }
   }
-}
-
-data "aws_eks_cluster" "eks" {
-  name = module.eks.cluster_name
-}
-
-data "aws_eks_cluster_auth" "eks" {
-  name = module.eks.cluster_name
 }

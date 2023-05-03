@@ -1,3 +1,6 @@
+variable "AWS_ACCESS_KEY_ID" {}
+
+variable "AWS_SECRET_ACCESS_KEY" {}
 
 variable "aws_region" {
   type        = string
@@ -30,11 +33,6 @@ variable "ssh_base_path" {
   type        = string
   description = "Base path for referencing ssh files"
   default     = "/home/ec2-user/.ssh"
-}
-
-variable "vpc_id" {
-  type        = string
-  description = "ID of VPC"
 }
 
 variable "vpc_cidr_block" {
