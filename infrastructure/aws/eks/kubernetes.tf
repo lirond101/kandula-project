@@ -1,13 +1,3 @@
-# # Kubernetes provider
-# # https://learn.hashicorp.com/terraform/kubernetes/provision-eks-cluster#optional-configure-terraform-kubernetes-provider
-# # To learn how to schedule deployments and services using the provider, go here: https://learn.hashicorp.com/terraform/kubernetes/deploy-nginx-kubernetes
-
-provider "kubernetes" {
-  host                   = data.aws_eks_cluster.eks.endpoint
-  cluster_ca_certificate = base64decode(data.aws_eks_cluster.eks.certificate_authority[0].data)
-  token                  = data.aws_eks_cluster_auth.eks.token
-}
-
 # https://aws.amazon.com/blogs/containers/amazon-ebs-csi-driver-is-now-generally-available-in-amazon-eks-add-ons/ 
 data "aws_iam_policy" "ebs_csi_policy" {
   arn = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
@@ -35,6 +25,12 @@ resource "aws_eks_addon" "ebs-csi" {
   }
 }
 
+resource "kubernetes_namespace" "kandula_namespace" {
+  metadata {
+    name = local.k8s_service_account_namespace
+  }
+}
+
 resource "kubernetes_service_account" "opsschool-sa" {
   metadata {
     name      = local.k8s_service_account_name
@@ -44,10 +40,4 @@ resource "kubernetes_service_account" "opsschool-sa" {
     }
   }
   depends_on = [module.eks]
-}
-
-resource "kubernetes_namespace" "kandula_namespace" {
-  metadata {
-    name = "kandula"
-  }
 }

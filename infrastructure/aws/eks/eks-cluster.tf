@@ -1,9 +1,24 @@
+data "aws_vpc" "selected" {
+  cidr_block = var.vpc_cidr_block
+}
+
+data "aws_subnets" "private" {
+  filter {
+    name   = "vpc-id"
+    values = [data.aws_vpc.selected.id]
+  }
+  tags = {
+    Tier = "Private"
+  }
+}
+
 module "eks" {
   source          = "terraform-aws-modules/eks/aws"
   version         = "19.10.0"
   cluster_name    = local.cluster_name
   cluster_version = var.kubernetes_version
-  subnet_ids         = keys(module.my_vpc.vpc_private_subnets)
+  vpc_id          = data.aws_vpc.selected.id
+  subnet_ids      = data.aws_subnets.private.ids
 
   cluster_endpoint_private_access = false
   cluster_endpoint_public_access = true
@@ -11,12 +26,10 @@ module "eks" {
   enable_irsa = true
   
   tags = {
-    Environment = "training"
+    Environment = var.env_name
     GithubRepo  = "terraform-aws-eks"
     GithubOrg   = "terraform-aws-modules"
   }
-
-  vpc_id = module.my_vpc.vpc_id
 
   eks_managed_node_group_defaults = {
       ami_type               = "AL2_x86_64"

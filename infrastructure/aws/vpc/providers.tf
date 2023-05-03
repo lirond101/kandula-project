@@ -30,12 +30,12 @@ terraform {
     }
   }
   required_version = ">= 1.1.0"
-  # cloud {
-  #   organization = "opsschool-lirondadon"
-  #   workspaces {
-  #     name = "Kandula"
-  #   }
-  # }
+  cloud {
+    organization = "opsschool-lirondadon"
+    workspaces {
+      name = "Kandula-VPC"
+    }
+  }
 }
 
 ##################################################################################

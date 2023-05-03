@@ -4,4 +4,4 @@ metadata:
   name: opsschool-sa
   namespace: kandula
   annotations:
-    eks.amazonaws.com/role-arn: arn:aws:iam::902770729603:role/opsschool-role
+    eks.amazonaws.com/role-arn: arn:aws:iam::var:role/opsschool-role

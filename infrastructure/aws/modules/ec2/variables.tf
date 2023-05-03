@@ -27,6 +27,7 @@ variable "instance_type" {
 }
 
 variable "instance_count_bastion" {
+  default     = 1
   type        = number
   description = "Number of bastion instances to create in VPC"
 }

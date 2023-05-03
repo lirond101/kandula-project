@@ -32,6 +32,11 @@ variable "ssh_base_path" {
   default     = "/home/ec2-user/.ssh"
 }
 
+variable "vpc_id" {
+  type        = string
+  description = "ID of VPC"
+}
+
 variable "vpc_cidr_block" {
   type        = string
   description = "Base CIDR Block for VPC"
@@ -67,22 +72,4 @@ variable "common_tags" {
   type        = map(string)
   description = "Map of tags to be applied to all resources"
   default     = {}
-}
-
-variable "ubuntu_18_region_based_ami" {
-  description = "ami (ubuntu 18) to use - based on region"
-  default = {
-    "us-east-1" = "ami-00ddb0e5626798373"
-    "us-east-2" = "ami-0dd9f0e7df0f0a138"
-  }
-}
-
-variable "instance_count_consul_servers" {
-  default = 6
-  description = "Number of Consul servers"
-}
-
-variable "bastion_allowed_cidr_blocks" {
-  type = list
-  description = "Allow these cidr blocks, seperated by comma"
 }
