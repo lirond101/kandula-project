@@ -4,6 +4,10 @@
 
 data "aws_availability_zones" "available" {}
 
+data "aws_s3_bucket" "selected" {
+  bucket = var.s3_bucket_name
+}
+
 ##################################################################################
 # RESOURCES
 ##################################################################################
@@ -36,3 +40,7 @@ module "my_vpc" {
     "kubernetes.io/role/internal-elb"             = "1"
   }
 }
+
+
+
+

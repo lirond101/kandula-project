@@ -58,7 +58,7 @@ variable "availability_zone" {
 variable "s3_bucket_name" {
   type = string
   description = "Name of the S3 bucket to create"
-  default = "kandula9-lirondadon"
+  default = "kandula-opsschool-lirondadon"
 }
 
 variable "kubernetes_version" {
