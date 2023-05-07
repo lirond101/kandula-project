@@ -18,7 +18,8 @@ resource "aws_subnet" "public_subnet" {
   vpc_id                  = aws_vpc.vpc.id
   map_public_ip_on_launch = true
   tags = merge(var.common_tags, var.public_subnet_tags, {
-    Name = "${var.name_prefix}-public-${var.availability_zone[count.index]}"
+    Name = "${var.name_prefix}-public-${var.availability_zone[count.index]}",
+    Tier = "Public"
   })
 }
 
@@ -32,7 +33,8 @@ resource "aws_subnet" "private_subnet" {
   availability_zone = var.availability_zone[count.index]
   vpc_id            = aws_vpc.vpc.id
   tags = merge(var.common_tags, var.private_subnet_tags, {
-    Name = "${var.name_prefix}-private-${var.availability_zone[count.index]}"
+    Name = "${var.name_prefix}-private-${var.availability_zone[count.index]}",
+    Tier = "Private"
   })
 }
 

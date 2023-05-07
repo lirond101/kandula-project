@@ -11,8 +11,6 @@ eksctl create iamidentitymapping \
     --no-duplicate-arns
 eksctl get iamidentitymapping --cluster $1 --region=$2
 
-# # kubectl apply -f opsschool-sa.yaml
-
 # Install NGINX ingress conroller 
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.7.0/deploy/static/provider/aws/deploy.yaml
 kubectl wait --namespace ingress-nginx \
@@ -20,42 +18,19 @@ kubectl wait --namespace ingress-nginx \
   --selector=app.kubernetes.io/component=controller \
   --timeout=120s
 
-# # Configure ebs-csi and iam role for it
-# # eksctl create addon --name aws-ebs-csi-driver --cluster $1 --region=$2 --service-account-role-arn arn:aws:iam::902770729603:role/AmazonEKS_EBS_CSI_DriverRole --force
-# # From scratch environment only - will fail if role exists 
-# # eksctl create iamserviceaccount \
-# #   --name ebs-csi-controller-sa \
-# #   --namespace kube-system \
-# #   --cluster $1 \
-# #   --attach-policy-arn arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy \
-# #   --approve \
-# #   --role-only \
-# #   --role-name AmazonEKS_EBS_CSI_DriverRole
-
-# # Alternative way to above command
-# aws eks create-addon --cluster-name $1 --region=$2 --addon-name aws-ebs-csi-driver \
-#   --service-account-role-arn arn:aws:iam::902770729603:role/AmazonEKS_EBS_CSI_DriverRole
-# sleep 30
-
-
-# # 1. Update manually the role trust relationship "AmazonEKS_EBS_CSI_DriverRole" with the current oidc provider.
-# # 2. Run the following:
-# kubectl annotate serviceaccount ebs-csi-controller-sa eks.amazonaws.com/role-arn=arn:aws:iam::902770729603:role/AmazonEKS_EBS_CSI_DriverRole -n kube-system
-# kubectl rollout restart deployment ebs-csi-controller -n kube-system
-
-# Create jenkins and apache appications
+# Install Jenkins
 kubectl create namespace jenkins
 kubectl apply -f jenkins-cluster-sa.yaml
 kubectl apply -f jenkins-sa-secret.yaml
 kubectl apply -f jenkins-pv-claim.yaml
 kubectl apply -f jenkins-app.yaml
-
-# kubectl create namespace kandula
-# kubectl apply -f kandula-app.yaml
-kubectl apply -f kandula-ingress.yaml
-kubectl apply -f devtools-ingress.yaml
+kubectl apply -f jenkins-ingress.yaml
 sleep 120
 
-INGRESS_LB_CNAME=$(kubectl get ingress kandula-ingress -o jsonpath="{.status.loadBalancer.ingress[0].hostname}" -n kandula)
+# Moved into jenkins jobs
+# kubectl apply -f kandula-app.yaml
+# kubectl apply -f kandula-ingress.yaml
+
+INGRESS_LB_CNAME=$(kubectl get ingress jenkins-ingress -o jsonpath="{.status.loadBalancer.ingress[0].hostname}" -n jenkins)
 echo $INGRESS_LB_CNAME
 kubectl -n jenkins describe secrets sa-jenkins
