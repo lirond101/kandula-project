@@ -1,14 +1,17 @@
 # echo "### Update kubeconfig with cluster name $1"
 aws eks --region=$2 update-kubeconfig --name $1
 
-echo "### Add employee2 to configmap 'aws-auth'"
+# echo "### Add employee2 to configmap 'aws-auth'"
 eksctl get iamidentitymapping --cluster $1 --region=$2
-eksctl create iamidentitymapping \
-    --cluster $1 \
-    --region=$2 \
-    --arn arn:aws:iam::902770729603:user/employee2 \
-    --group system:masters \
-    --no-duplicate-arns
+# eksctl create iamidentitymapping \
+#     --cluster $1 \
+#     --region=$2 \
+#     --arn arn:aws:iam::902770729603:user/employee2 \
+#     --group system:masters \
+#     --no-duplicate-arns
+
+echo "### Add Role AdministratorAccess to configmap 'aws-auth'"
+eksctl create iamidentitymapping --cluster  $1 --region=$2 --arn arn:aws:iam::902770729603:role/AdministratorAccess --group system:masters --username admin
 eksctl get iamidentitymapping --cluster $1 --region=$2
 
 # Install NGINX ingress conroller 

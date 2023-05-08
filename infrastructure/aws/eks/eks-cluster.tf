@@ -12,6 +12,16 @@ data "aws_subnets" "private" {
   }
 }
 
+data "aws_eks_cluster" "eks" {
+  depends_on = [module.eks.cluster_id]
+  name = module.eks.cluster_name
+}
+
+data "aws_eks_cluster_auth" "eks" {
+  depends_on = [module.eks.cluster_id]
+  name = module.eks.cluster_name
+}
+
 module "eks" {
   source          = "terraform-aws-modules/eks/aws"
   version         = "19.10.0"
