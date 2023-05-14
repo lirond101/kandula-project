@@ -21,6 +21,9 @@ kubectl wait --namespace ingress-nginx \
   --selector=app.kubernetes.io/component=controller \
   --timeout=120s
 
+helm repo add hashicorp https://helm.releases.hashicorp.com
+helm install --values helm/values-v0.yaml consul hashicorp/consul --create-namespace --namespace consul --version "1.0.2"
+
 # Install Jenkins
 kubectl create namespace jenkins
 kubectl apply -f jenkins-cluster-sa.yaml

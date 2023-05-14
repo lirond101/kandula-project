@@ -80,9 +80,9 @@ variable "ubuntu_18_region_based_ami" {
   }
 }
 
-variable "instance_count_consul_servers" {
-  default = 3
-  description = "Number of Consul servers"
+variable "instance_count_consul" {
+  default = 1
+  description = "Number of Consul agents"
 }
 
 variable "bastion_allowed_cidr_blocks" {
