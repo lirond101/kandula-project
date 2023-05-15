@@ -22,6 +22,7 @@ USER root
 #                 do /usr/local/bin/install-plugin-cli.sh $i ; \
 #         done < /usr/share/jenkins/plugins
 
+#TODO remove unnecessary plugins - ssh, docker (unless I eventually use docker plugin instead od dind)
 COPY --chown=jenkins:jenkins jenkins-plugins.txt /usr/share/jenkins/ref/jenkins-plugins.txt
 RUN jenkins-plugin-cli -f /usr/share/jenkins/ref/jenkins-plugins.txt
 

@@ -28,7 +28,7 @@ The project is mainly built from terraform files and few more provisioning files
     6.3. Configure k8s cloud - (k8s plugin for jenkins is already installed see here for installed plugins - https://github.com/lirond101/kandula-project/blob/vpc/infrastructure/jenkins/controller/jenkins-plugins.txt)
         6.3.1. Jenkins URL: http://<your-domain>/jenkins
         6.3.2. Jenkins tunnel: jenkins-svc.jenkins.svc.cluster.local:50000
-        6.3.3. Credentials - K8s jenkins service account -use the JWT which ./setup from step 4 outputs.
+        6.3.3. Credentials - K8s jenkins service account -use the JWT which ./setup from step 4 outputs. #TODO add the type of credentials.
     6.4. Store credentials for Jenkins pipeline:
         6.4.1. Dockerhub - username / password.
         6.4.2. Github - SSH key - generate key pair and store here its private part and on Github at SSH and GPG store the public part.

@@ -1,6 +1,7 @@
 # echo "### Update kubeconfig with cluster name $1"
 aws eks --region=$2 update-kubeconfig --name $1
 
+# In case of error use the same user/role that created the cluster.
 # echo "### Add employee2 to configmap 'aws-auth'"
 eksctl get iamidentitymapping --cluster $1 --region=$2
 # eksctl create iamidentitymapping \
@@ -14,15 +15,17 @@ echo "### Add Role AdministratorAccess to configmap 'aws-auth'"
 eksctl create iamidentitymapping --cluster  $1 --region=$2 --arn arn:aws:iam::902770729603:role/AdministratorAccess --group system:masters --username admin
 eksctl get iamidentitymapping --cluster $1 --region=$2
 
+#TODO change key to a generated one (https://github.com/hashicorp/terraform-provider-consul/issues/48)
+kubectl create secret generic consul-gossip-encryption-key --from-literal=key="uDBV4e+LbFW3019YKPxIrg==" -n consul
+helm repo add hashicorp https://helm.releases.hashicorp.com
+helm install --values helm/values-v0.yaml consul hashicorp/consul --create-namespace --namespace consul --version "1.0.2"
+
 # Install NGINX ingress conroller 
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.7.0/deploy/static/provider/aws/deploy.yaml
 kubectl wait --namespace ingress-nginx \
   --for=condition=ready pod \
   --selector=app.kubernetes.io/component=controller \
   --timeout=120s
-
-helm repo add hashicorp https://helm.releases.hashicorp.com
-helm install --values helm/values-v0.yaml consul hashicorp/consul --create-namespace --namespace consul --version "1.0.2"
 
 # Install Jenkins
 kubectl create namespace jenkins

@@ -11,11 +11,11 @@ global:
   datacenter: dc1
   # Enables TLS across the cluster to verify authenticity of the Consul servers and clients.
   tls:
-    enabled: false
+    enabled: true
   # Enables ACLs across the cluster to secure access to data and APIs.
   acls:
     # If true, automatically manage ACL tokens and policies for all Consul components.
-    manageSystemACLs: false
+    manageSystemACLs: true
   #
   gossipEncryption:
     secretName: "consul-gossip-encryption-key"
@@ -33,9 +33,9 @@ ui:
   #   type: LoadBalancer
 # Configures and installs the automatic Consul Connect sidecar injector.
 connectInject:
-  enabled: true
-  # cni:
-  #   enabled: true
-  #   logLevel: info
-  #   cniBinDir: "/opt/cni/bin"
-  #   cniNetDir: "/etc/cni/net.d"
+  enabled: false
+#   cni:
+#     enabled: true
+#     logLevel: info
+#     cniBinDir: "/opt/cni/bin"
+#     cniNetDir: "/etc/cni/net.d"
