@@ -5,3 +5,8 @@ resource "aws_s3_object" "object" {
   content = "${local.cluster_name}"
   content_type = "text/*"
 }
+
+data "aws_s3_object" "config" {
+  bucket = var.s3_bucket_name
+  key = "config.json"
+}
