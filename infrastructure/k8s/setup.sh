@@ -1,3 +1,5 @@
+cd ~/kandula-project/infrastructure/k8s
+#TODO add with terraform another role to interact with cluster
 # echo "### Update kubeconfig with cluster name $1"
 aws eks --region=$2 update-kubeconfig --name $1
 
@@ -16,9 +18,11 @@ eksctl create iamidentitymapping --cluster  $1 --region=$2 --arn arn:aws:iam::90
 eksctl get iamidentitymapping --cluster $1 --region=$2
 
 #TODO change key to a generated one (https://github.com/hashicorp/terraform-provider-consul/issues/48)
+
+kubectl create ns consul
 kubectl create secret generic consul-gossip-encryption-key --from-literal=key="uDBV4e+LbFW3019YKPxIrg==" -n consul
 helm repo add hashicorp https://helm.releases.hashicorp.com
-helm install --values helm/values-v0.yaml consul hashicorp/consul --create-namespace --namespace consul --version "1.0.2"
+helm install --values helm/values-v10.yaml consul hashicorp/consul --namespace consul --version "1.0.2"
 
 # Install NGINX ingress conroller 
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.7.0/deploy/static/provider/aws/deploy.yaml

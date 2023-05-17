@@ -1,3 +1,4 @@
+#TODO lesser jenkins unnecessary previleges
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -43,6 +44,17 @@ rules:
   - apiGroups: [""]
     resources: ["events"]
     verbs: ["get","list","watch"]
+  - apiGroups: [""]
+    resources: 
+      - services
+    verbs:
+      - list
+      - get
+      - patch
+      - update
+      - create
+      - delete
+      - watch
   - apiGroups: ["apps"]
     resources: 
       - deployments
@@ -54,9 +66,9 @@ rules:
       - create
       - delete
       - watch
-  - apiGroups: [""]
-    resources: 
-      - services
+  - apiGroups: ["networking.k8s.io"]
+    resources:
+      - ingresses
     verbs:
       - list
       - get

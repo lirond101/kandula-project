@@ -1,3 +1,4 @@
+#TODO remove "all_worker_mgmt"
 resource "aws_security_group" "all_worker_mgmt" {
   name_prefix = "all_worker_management"
   vpc_id      = data.aws_vpc.selected.id
@@ -26,6 +27,7 @@ resource "aws_security_group" "all_nodes_mgmt" {
   )
 }
 
+# TODO change cidr_blocks into self
 resource "aws_security_group_rule" "nodes_allow_22_bastion" {
   security_group_id        = aws_security_group.all_nodes_mgmt.id
   type                     = "ingress"
@@ -86,6 +88,26 @@ resource "aws_security_group_rule" "consul_server_allow_client_8301_udp" {
   description              = "Allow LAN gossip traffic from Consul Client to Server.  For managing cluster membership for distributed health check of the agents."
 }
 
+resource "aws_security_group_rule" "consul_server_allow_client_8302_tcp" {
+  security_group_id        = aws_security_group.all_nodes_mgmt.id
+  type                     = "ingress"
+  protocol                 = "tcp"
+  from_port                = 8302
+  to_port                  = 8302
+  cidr_blocks              = ["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16"]
+  description              = "Allow WAN gossip traffic from Consul Client to Server.  For managing cluster membership for distributed health check of the agents."
+}
+
+resource "aws_security_group_rule" "consul_server_allow_client_8302_udp" {
+  security_group_id        = aws_security_group.all_nodes_mgmt.id
+  type                     = "ingress"
+  protocol                 = "udp"
+  from_port                = 8302
+  to_port                  = 8302
+  cidr_blocks              = ["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16"]
+  description              = "Allow WAN gossip traffic from Consul Client to Server.  For managing cluster membership for distributed health check of the agents."
+}
+
 resource "aws_security_group_rule" "consul_server_allow_8300" {
   security_group_id        = aws_security_group.all_nodes_mgmt.id
   type                     = "ingress"
@@ -94,6 +116,26 @@ resource "aws_security_group_rule" "consul_server_allow_8300" {
   to_port                  = 8300
   cidr_blocks              = ["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16"]
   description              = "Allow RPC traffic from Consul Client to Server and Server to Server.  For client and server agents to send and receive data stored in Consul."
+}
+
+resource "aws_security_group_rule" "consul_server_allow_21000_21255" {
+  security_group_id        = aws_security_group.all_nodes_mgmt.id
+  type                     = "ingress"
+  protocol                 = "tcp"
+  from_port                = 21000
+  to_port                  = 21255
+  cidr_blocks              = ["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16"]
+  description              = "Allow Sidecar Proxy - ports number to use for automatically assigned sidecar service registrations.."
+}
+
+resource "aws_security_group_rule" "consul_server_allow_8080" {
+  security_group_id        = aws_security_group.all_nodes_mgmt.id
+  type                     = "ingress"
+  protocol                 = "tcp"
+  from_port                = 8080
+  to_port                  = 8080
+  cidr_blocks              = ["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16"]
+  description              = "Allow Sidecar injector - consul-connect-injector service maps 443 into 8080 on the pod."
 }
 
 resource "aws_security_group_rule" "nodes_allow_outbound" {

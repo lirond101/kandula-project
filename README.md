@@ -32,7 +32,10 @@ The project is mainly built from terraform files and few more provisioning files
     6.4. Store credentials for Jenkins pipeline:
         6.4.1. Dockerhub - username / password.
         6.4.2. Github - SSH key - generate key pair and store here its private part and on Github at SSH and GPG store the public part.
-            6.4.2.1 - Go to global credentials and update the github known keys - I prefer to choose "provide it manually" and put there the response of $ ssh-keyscan github.com
+            6.4.2.1 - Go to global credentials and update the github known keys - I prefer to choose "provide it manually" and put there the response of:
+            ```shell script
+               $ ssh-keyscan github.com
+            
 7. Go to http://your-domain>/ and enjoy with kandula.
 8. ## SSH
 ```shell script

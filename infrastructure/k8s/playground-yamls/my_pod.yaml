@@ -1,10 +1,11 @@
-
 apiVersion: v1
 kind: Pod
 metadata:
   labels:
     run: my-pod
-  name: my-pod
+  annotations:
+      consul.hashicorp.com/connect-inject: "true"
+  name: my-pod2
   namespace: kandula
 spec:
   serviceAccountName: kandula-sa
