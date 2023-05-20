@@ -26,6 +26,7 @@ helm install --values helm/values-v10.yaml consul hashicorp/consul --namespace c
 
 # Install NGINX ingress conroller 
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.7.0/deploy/static/provider/aws/deploy.yaml
+sleep 10
 kubectl wait --namespace ingress-nginx \
   --for=condition=ready pod \
   --selector=app.kubernetes.io/component=controller \
@@ -47,3 +48,7 @@ sleep 120
 INGRESS_LB_CNAME=$(kubectl get ingress jenkins-ingress -o jsonpath="{.status.loadBalancer.ingress[0].hostname}" -n jenkins)
 echo $INGRESS_LB_CNAME
 kubectl -n jenkins describe secrets sa-jenkins
+
+echo "### Add Consul dns to configmap 'coredns'"
+CONSUL_DNS=$(kubectl get svc consul-dns -n consul -o jsonpath="{.spec.clusterIP}")
+sed "s/x.x.x.x/$CONSUL_DNS/" corefile.json | kubectl apply -f -
