@@ -51,4 +51,5 @@ kubectl -n jenkins describe secrets sa-jenkins
 
 echo "### Add Consul dns to configmap 'coredns'"
 CONSUL_DNS=$(kubectl get svc consul-dns -n consul -o jsonpath="{.spec.clusterIP}")
+echo $CONSUL_DNS
 sed "s/x.x.x.x/$CONSUL_DNS/" corefile.json | kubectl apply -f -

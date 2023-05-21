@@ -19,7 +19,7 @@ spec:
       serviceAccountName: jenkins-cluster-admin
       containers:
       - name: jenkins
-        image: lirondadon/my-jenkins:latest
+        image: lirondadon/my-jenkins:1.0.0
         ports:
         - name: httpport
           containerPort: 8080
