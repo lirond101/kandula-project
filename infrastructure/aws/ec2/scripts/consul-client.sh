@@ -11,7 +11,7 @@ sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(l
 sudo apt-get update && sudo apt-get install consul unzip awscli
 rm gpg.txt
 
-aws eks --region=us-east-2 update-kubeconfig --name opsschool-eks-hbVC2yo8
+# aws eks --region=us-east-2 update-kubeconfig --name opsschool-eks-hbVC2yo8
 
 #TODO add user ec2-user to group consul and avoid cp kubeconfig file to his dir.
 #sudo mkdir -p /home/consul/.kube
@@ -24,17 +24,17 @@ local_ip=`ip -o route get to 169.254.169.254 | sed -n 's/.*src \([0-9.]\+\).*/\1
 cat > /etc/consul.d/consul.hcl <<- EOF
 node_name = "consul-client-ubuntu"
 data_dir = "/opt/consul"
-datacenter = "dc1"
+datacenter = "opsschool"
 log_level  = "DEBUG"
 server = false
 client_addr = "0.0.0.0"
 bind_addr = "0.0.0.0"
 advertise_addr = "$local_ip"
-retry_join = ["provider=k8s label_selector=\"app=consul,component=server\" kubeconfig=$HOME/.kube/config namespace=\"consul\""]
-encrypt = "uDBV4e+LbFW3019YKPxIrg=="
-encrypt_verify_incoming = true
-encrypt_verify_outgoing = true
-disable_keyring_file = true
+# retry_join = ["provider=k8s label_selector=\"app=consul,component=server\" kubeconfig=$HOME/.kube/config namespace=\"consul\""]
+encrypt = "uDBV4e+LbFW3019YKPxIrh=="
+# encrypt_verify_incoming = true
+# encrypt_verify_outgoing = true
+# disable_keyring_file = true
 EOF
 
 # Start Consul

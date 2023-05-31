@@ -22,7 +22,9 @@ eksctl get iamidentitymapping --cluster $1 --region=$2
 kubectl create ns consul
 kubectl create secret generic consul-gossip-encryption-key --from-literal=key="uDBV4e+LbFW3019YKPxIrg==" -n consul
 helm repo add hashicorp https://helm.releases.hashicorp.com
-helm install --values helm/values-v10.yaml consul hashicorp/consul --namespace consul --version "1.0.2"
+# helm install --values helm/values-v10.yaml consul hashicorp/consul --namespace consul --version "1.0.7"
+# helm install --values helm/values-v10.yaml consul hashicorp/consul --create-namespace --namespace consul --version "1.1.0"
+helm install --values helm/values.yaml consul hashicorp/consul --namespace consul --version "1.1.0"
 
 # Install NGINX ingress conroller 
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.7.0/deploy/static/provider/aws/deploy.yaml
@@ -52,4 +54,5 @@ kubectl -n jenkins describe secrets sa-jenkins
 echo "### Add Consul dns to configmap 'coredns'"
 CONSUL_DNS=$(kubectl get svc consul-dns -n consul -o jsonpath="{.spec.clusterIP}")
 echo $CONSUL_DNS
-sed "s/x.x.x.x/$CONSUL_DNS/" corefile.json | kubectl apply -f -
+
+sed "s/x.x.x.x/$CONSUL_DNS/" consul/corefile.json | kubectl apply -f -

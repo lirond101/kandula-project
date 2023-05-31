@@ -30,7 +30,7 @@ resource "aws_iam_instance_profile" "instance_profile" {
 }
 
 resource "aws_iam_role_policy" "describe_ec2" {
-  name = "allow_all_ec2"
+  name = "allow_all_describe_ec2"
   role = aws_iam_role.allow_instance_describe_ec2.name
 
   policy = <<EOF
@@ -48,4 +48,29 @@ resource "aws_iam_role_policy" "describe_ec2" {
 }
 EOF
 
+  tags = merge(var.common_tags, {
+    Name = "${local.name_prefix}-policy-ec2"
+  })
+}
+
+resource "aws_iam_role_policy" "view_eks" {
+  name = "view_k8s"
+  role = aws_iam_role.allow_instance_describe_ec2.name
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": "eks:AccessKubernetesApi",
+      "Resource": "arn:aws:eks:*:902770729603:cluster/*"
+    }
+  ]
+}
+EOF
+
+  tags = merge(var.common_tags, {
+    Name = "${local.name_prefix}-policy-eks"
+  })
 }

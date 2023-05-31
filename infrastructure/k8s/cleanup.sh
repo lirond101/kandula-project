@@ -12,3 +12,6 @@ kubectl delete namespace kandula
 
 helm -n consul uninstall consul
 kubectl delete ns consul
+
+helm uninstall prometheus -n prometheus
+kubectl delete ns prometheus
