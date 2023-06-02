@@ -1,0 +1,13 @@
+[Unit]
+Description=WEBSERVER
+After=syslog.target network.target
+
+[Service]
+Environment="MESSAGE=Hello from Webserver"
+Environment="NAME=webserver"
+ExecStart=/usr/local/bin/fake-service
+ExecStop=/bin/sleep 5
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

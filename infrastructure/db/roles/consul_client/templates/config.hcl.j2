@@ -1,0 +1,14 @@
+      data_dir = "/opt/consul"
+      datacenter = "opsschool2"
+      server_name = "webserver"
+      encrypt = "uDBV4e+LbFW3019YKPxIrg=="
+      disable_update_check = true
+      leave_on_terminate = true
+      client_addr = "0.0.0.0"
+      ui_config{
+        enabled = true
+      }
+      server = false
+      bind_addr = "0.0.0.0"
+      advertise_addr = "{{ PRIVATE_IP.stdout }}"
+      retry_join = ["provider=aws tag_key=consul_server tag_value=true"]

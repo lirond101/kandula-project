@@ -1,0 +1,123 @@
+---
+- name: Installing dependencies
+  apt:
+    pkg:
+      - unzip
+      - dnsmasq
+    update_cache: true
+    state: latest
+
+- name: "Ansible | Creating dnsmasq"
+  copy:
+    dest: "/etc/dnsmasq.d/10-consul"
+    content: |
+      # Enable forward lookup of the 'consul' domain:
+      server=/consul/127.0.0.1#8600
+  notify:
+    - Restarting dnsmasq
+
+- name: "Ansible | Update resolved.conf"
+  blockinfile:
+    path: "/etc/systemd/resolved.conf"
+    block: |
+      [Resolve]
+      DNS=127.0.0.1
+      Domains=~consul
+  notify:
+    - Restarting systemd-resolved.service
+
+- name: Adding Consul GPG apt Key
+  apt_key:
+    url: https://apt.releases.hashicorp.com/gpg
+    state: present
+    
+- name: Adding Consul Repository
+  apt_repository:
+    repo: "deb https://apt.releases.hashicorp.com bionic main"
+    state: present
+    update_cache: true
+
+- name: Installing Consul  
+  apt:
+    update_cache: yes
+    pkg:
+      - consul
+    state: latest
+
+- name: Fetch instance metadata
+  shell: ip -o route get to 169.254.169.254 | sed -n 's/.*src \([0-9.]\+\).*/\1/p'
+  register: PRIVATE_IP
+
+- name: print var PRIVATE_IP
+  debug:
+    var: "{{ PRIVATE_IP }}"
+
+- name: "Ansible | Modifying consul.hcl"
+  template:
+    src: config.hcl.j2
+    dest: "/etc/consul.d/consul.hcl"
+    owner: consul
+    group: consul
+
+- name: Creating /run/consul directory
+  file:
+    path: /run/consul
+    state: directory
+    owner: consul
+    group: consul
+    recurse: yes
+
+- name: Appending "ubuntu" user to "consul" group
+  user:
+    name: "ubuntu"
+    group: "consul"
+    append: yes
+
+- name: "Ansible | Creating consul.service"
+  template:
+    src: consul.service.j2
+    dest: "/etc/systemd/system/consul.service"
+    owner: consul
+    group: consul
+
+- name: Starting consul.service
+  systemd:
+    name: consul.service
+    daemon_reload: true
+    enabled: true
+    state: started
+
+- name: UNZIPPING the files
+  unarchive:
+    src: https://github.com/nicholasjackson/fake-service/releases/download/v0.22.7/fake_service_linux_amd64.zip
+    dest: "/usr/local/bin"
+    remote_src: yes
+
+- name: Changing perm file - adding "+x"
+  file:
+    path: /usr/local/bin/fake-service
+    mode: '0777'
+
+- name: "Ansible | Creating webserver.service"
+  template:
+    src: webserver.service.j2
+    dest: "/etc/systemd/system/webserver.service"
+    owner: consul
+    group: consul
+
+- name: Starting webserver.service
+  systemd:
+    name: webserver.service
+    daemon_reload: true
+    enabled: true
+    state: started
+
+
+- name: "Ansible | Modifying webserver.hcl"
+  template:
+    src: webserver.hcl.j2
+    dest: "/etc/consul.d/webserver.hcl"
+    owner: consul
+    group: consul
+  notify:
+    - Restarting consul

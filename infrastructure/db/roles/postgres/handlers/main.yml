@@ -1,0 +1,15 @@
+- name: Restarting postgresql
+  systemd:
+    name: postgresql.service
+    enabled: true
+    state: restarted
+
+# - name: Restarting dnsmasq
+#   service:
+#     name: dnsmasq
+#     state: restarted
+
+# - name: Restarting systemd-resolved.service
+#   service:
+#     name: systemd-resolved.service
+#     state: restarted
