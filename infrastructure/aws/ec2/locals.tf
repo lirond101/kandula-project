@@ -9,7 +9,7 @@ locals {
     project = var.project
   }
   name_prefix = "${var.project}-${var.env_name}"
-  cluster_name = "${var.company}-eks-${random_string.suffix.result}"
-  k8s_service_account_namespace = "kandula"
-  k8s_service_account_name      = "opsschool-sa"
+  # cluster_name = "${var.company}-eks-${random_string.suffix.result}"
+  # k8s_service_account_namespace = "kandula"
+  # k8s_service_account_name      = "opsschool-sa"
 }

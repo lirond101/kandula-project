@@ -61,10 +61,10 @@ variable "s3_bucket_name" {
   default = "kandula-opsschool-lirondadon"
 }
 
-variable "kubernetes_version" {
-  default = 1.24
-  description = "kubernetes version"
-}
+# variable "kubernetes_version" {
+#   default = 1.24
+#   description = "kubernetes version"
+# }
 
 variable "common_tags" {
   type        = map(string)
@@ -72,16 +72,16 @@ variable "common_tags" {
   default     = {}
 }
 
-variable "ubuntu_18_region_based_ami" {
-  description = "ami (ubuntu 18) to use - based on region"
-  default = {
-    "us-east-1" = "ami-00ddb0e5626798373"
-    "us-east-2" = "ami-0dd9f0e7df0f0a138"
-  }
-}
+# variable "ubuntu_18_region_based_ami" {
+#   description = "ami (ubuntu 18) to use - based on region"
+#   default = {
+#     "us-east-1" = "ami-00ddb0e5626798373"
+#     "us-east-2" = "ami-0dd9f0e7df0f0a138"
+#   }
+# }
 
 variable "instance_count_consul" {
-  default = 1
+  default = 3
   description = "Number of Consul agents"
 }
 

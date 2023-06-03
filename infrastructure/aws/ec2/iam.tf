@@ -47,10 +47,6 @@ resource "aws_iam_role_policy" "describe_ec2" {
   ]
 }
 EOF
-
-  tags = merge(var.common_tags, {
-    Name = "${local.name_prefix}-policy-ec2"
-  })
 }
 
 resource "aws_iam_role_policy" "view_eks" {
@@ -69,8 +65,4 @@ resource "aws_iam_role_policy" "view_eks" {
   ]
 }
 EOF
-
-  tags = merge(var.common_tags, {
-    Name = "${local.name_prefix}-policy-eks"
-  })
 }

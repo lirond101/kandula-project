@@ -65,7 +65,7 @@ resource "aws_security_group_rule" "consul_server_allow_client_8600_tcp" {
   from_port                = 8600
   to_port                  = 8600
   cidr_blocks              = ["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16"]
-  description              = "Allow UDP traffic for DNS queries."
+  description              = "Allow TCP traffic for DNS queries."
 }
 
 resource "aws_security_group_rule" "consul_server_allow_client_8301_tcp" {

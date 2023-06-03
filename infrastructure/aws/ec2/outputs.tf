@@ -6,10 +6,10 @@ output "bastion_servers" {
   value = "${module.my_ec2.bastion_servers}"
 }
 
-output "consul_servers" {
-  value = "${module.my_ec2.consul_servers}"
+output "db_servers" {
+  value = "${module.my_ec2.db_servers}"
 }
 
-output "aws_consul_ids" {
-  value = "${module.my_ec2.aws_consul_ids}"
+output "aws_db_ids" {
+  value = "${module.my_ec2.aws_db_ids}"
 }
