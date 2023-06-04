@@ -42,5 +42,12 @@ The project is mainly built from terraform files and few more provisioning files
    $ chmod 400 your_aws_ec2_key.pem
    $ ssh-add -k ~/.ssh/your_aws_ec2_key.pem
    $ ssh -A <user>@<bastion-ip>
-   @ ssh <user>@<private-instance-ip>
+   $ ssh <user>@<private-instance-ip>
+   ```
+9. ## Connect PostgreSQL client through SSH tunnel into db
+```shell script
+   $ chmod 400 your_aws_ec2_key.pem
+   $ ssh-add -k ~/.ssh/your_aws_ec2_key.pem
+   $ ssh -L <local-port>:<db-server-ip-addr>:<db-port> <ssh-user>@<ssh-server-ip-addr>(:<ssh-port>)
+   $ psql -p <local-port> -U <user> -d <db> -h localhost
    ```
