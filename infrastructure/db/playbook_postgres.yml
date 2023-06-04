@@ -1,6 +1,6 @@
 ---
 - name: Play for configure db postgresql on ec2 server
-  hosts: aws_ec2
+  hosts: _db
   become: yes
   remote_user: ubuntu
   roles:

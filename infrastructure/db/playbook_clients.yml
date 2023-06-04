@@ -1,6 +1,6 @@
 ---
 - name: Play for configure consul servers and run service consul
-  hosts: aws_ec2
+  hosts: _db
   become: yes
   remote_user: ubuntu
   roles:

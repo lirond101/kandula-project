@@ -31,7 +31,7 @@
 - name: Install PostgreSQL
   apt:
     pkg:
-      - postgresql-14
+      - postgresql-"{{ postgres_version }}"
     update_cache: true
     state: latest
 
@@ -83,14 +83,14 @@
 - name: "Ansible | Modifying pg_hba.conf"
   template:
     src: pg_hba.conf.j2
-    dest: "/etc/postgresql/14/main/pg_hba.conf"
+    dest: "/etc/postgresql/{{  postgres_version }}/main/pg_hba.conf"
     owner: postgres
     group: postgres
 
 - name: "Ansible | Modifying postgresql.conf"
   template:
     src: postgresql.conf.j2
-    dest: "/etc/postgresql/14/main/postgresql.conf"
+    dest: "/etc/postgresql/{{ postgres_version }}/main/postgresql.conf"
     owner: postgres
     group: postgres
   notify:

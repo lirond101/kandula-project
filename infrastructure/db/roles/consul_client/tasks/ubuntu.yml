@@ -30,10 +30,14 @@
   apt_key:
     url: https://apt.releases.hashicorp.com/gpg
     state: present
+
+- name: Linux Standard Base and Distribution information
+  command: lsb_release -sc
+  register: lsb_release
     
 - name: Adding Consul Repository
   apt_repository:
-    repo: "deb https://apt.releases.hashicorp.com bionic main"
+    repo: "deb https://apt.releases.hashicorp.com {{ lsb_release.stdout }} main"
     state: present
     update_cache: true
 
