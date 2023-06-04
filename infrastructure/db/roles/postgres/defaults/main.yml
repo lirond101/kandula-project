@@ -8,4 +8,4 @@ ansible_python_interpreter: /usr/bin/python3
 postgres_version: 14
 db_user: admin
 db_password: Passw0rd
-db_name: testdb
+db_name: opsschool

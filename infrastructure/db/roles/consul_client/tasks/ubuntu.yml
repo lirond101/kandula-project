@@ -4,6 +4,7 @@
     pkg:
       - unzip
       - dnsmasq
+      - awscli
     update_cache: true
     state: latest
 
