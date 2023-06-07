@@ -4,10 +4,8 @@
     pkg:
       - apt-transport-https
       - ca-certificates
-      # - curl
       - software-properties-common
       - gnupg-agent
-      # - python3-pip
       - python3-psycopg2
       - prometheus-node-exporter
     state: latest
@@ -59,27 +57,6 @@
     role_attr_flags: CREATEDB,CREATEROLE,SUPERUSER
     state: present
 
-# - name: Ensure user does have necessary permissions
-#   become: true
-#   become_user: postgres
-#   community.postgresql.postgresql_user: 
-#     db: "{{ db_name }}"
-#     name: "{{ db_user }}"
-#     role_attr_flags: CREATEDB,CREATEROLE,SUPERUSER
-#     state: present
-
-# - name: "Ansible | Modifying dump.sql"
-#   template:
-#     src: dump.sql.j2
-#     dest: "/tmp/dump.sql"
-#     owner: postgres
-#     group: postgres
-
-# - name: Add some dummy data to our database
-#   become: true
-#   become_user: postgres
-#   shell: psql {{ db_name }} < /tmp/dump.sql
-
 - name: "Ansible | Modifying opsschool_db.sql"
   template:
     src: opsschool_db.sql.j2
@@ -87,7 +64,7 @@
     owner: postgres
     group: postgres
 
-- name: Add some dummy data to our database
+- name: Add data to our database
   become: true
   become_user: postgres
   shell: psql {{ db_name }} < /tmp/opsschool_db.sql
@@ -95,7 +72,7 @@
 - name: "Ansible | Modifying pg_hba.conf"
   template:
     src: pg_hba.conf.j2
-    dest: "/etc/postgresql/{{  postgres_version }}/main/pg_hba.conf"
+    dest: "/etc/postgresql/{{ postgres_version }}/main/pg_hba.conf"
     owner: postgres
     group: postgres
 
