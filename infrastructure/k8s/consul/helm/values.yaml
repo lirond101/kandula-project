@@ -46,6 +46,6 @@ global:
 #   enabled: true
 syncCatalog:
   enabled: true
-  default: 
+  default: false
 #Add filtering here for sync catalog
 

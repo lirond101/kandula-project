@@ -60,7 +60,7 @@ module "eks" {
       min_size     = 0
       max_size     = 6
       desired_size = 2
-      instance_types = ["t3.large"]
+      instance_types = ["t3.medium"]
     }
   }
 }

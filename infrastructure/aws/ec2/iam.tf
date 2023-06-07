@@ -59,7 +59,10 @@ resource "aws_iam_role_policy" "view_eks" {
   "Statement": [
     {
       "Effect": "Allow",
-      "Action": "eks:AccessKubernetesApi",
+      "Action": [
+          "eks:AccessKubernetesApi",
+          "eks:DescribeCluster"
+      ],
       "Resource": "arn:aws:eks:*:902770729603:cluster/*"
     }
   ]

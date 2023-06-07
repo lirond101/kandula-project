@@ -117,6 +117,12 @@
     enabled: true
     state: started
 
+- name: "Ansible | Modifying postgres.hcl"
+  template:
+    src: postgres.hcl.j2
+    dest: "/etc/consul.d/postgres.hcl"
+    owner: consul
+    group: consul
 
 - name: "Ansible | Modifying webserver.hcl"
   template:

@@ -67,3 +67,19 @@ spec:
     protocol: TCP
   selector:
     app: kandula-app
+
+---
+kind: ConfigMap 
+apiVersion: v1 
+metadata:
+  name: kandula-conf
+  namespace: kandula
+data:
+  LOG_LEVEL: info
+  app/database.ini: | 
+    [postgresql]
+    host=127.0.0.1
+    database=opsschool
+    user=admin
+    password=Passw0rd
+    port=5432
