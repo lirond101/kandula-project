@@ -5,3 +5,5 @@ ansible_ssh_common_args:
   -o StrictHostKeyChecking=no \
   -o IdentityFile=~/.ssh/kandulaKey.pem
 ansible_python_interpreter: /usr/bin/python3
+s3_bucket: kandula-opsschool-lirondadon
+aws_region: us-east-2

@@ -1,12 +1,20 @@
 ---
-- name: Installing dependencies
+- name: Installing dependencies apt
   apt:
     pkg:
-      - unzip
+      - python3-pip
       - dnsmasq
-      - awscli
     update_cache: true
     state: latest
+
+- name: Installing dependencies pip
+  pip:
+    name:
+    - boto3
+    - botocore
+    - awscli
+    extra_args: --upgrade
+    executable: pip3
 
 - name: "Ansible | Creating dnsmasq"
   copy:
@@ -55,7 +63,7 @@
 
 - name: print var PRIVATE_IP
   debug:
-    var: "{{ PRIVATE_IP }}"
+    var: "{{ PRIVATE_IP.stdout }}"
 
 - name: "Ansible | Modifying consul.hcl"
   template:
@@ -92,42 +100,24 @@
     enabled: true
     state: started
 
-- name: UNZIPPING the files
-  unarchive:
-    src: https://github.com/nicholasjackson/fake-service/releases/download/v0.22.7/fake_service_linux_amd64.zip
-    dest: "/usr/local/bin"
-    remote_src: yes
+- name: "Ansible | Get EKS cluster name from S3"
+  amazon.aws.aws_s3:
+    bucket: "{{ s3_bucket }}"
+    mode: get
+    object: "cluster_name"
+    dest: /usr/local/cluster_name.txt
 
-- name: Changing perm file - adding "+x"
-  file:
-    path: /usr/local/bin/fake-service
-    mode: '0777'
+- name: print var EKS_CLUSTER_NAME
+  command: "cat /usr/local/cluster_name.txt"
+  register: EKS_CLUSTER_NAME
 
-- name: "Ansible | Creating webserver.service"
-  template:
-    src: webserver.service.j2
-    dest: "/etc/systemd/system/webserver.service"
-    owner: consul
-    group: consul
-
-- name: Starting webserver.service
-  systemd:
-    name: webserver.service
-    daemon_reload: true
-    enabled: true
-    state: started
+- name: "Ansible | Update k8s context"
+  command: "aws eks --region={{ aws_region }} update-kubeconfig --name {{ EKS_CLUSTER_NAME.stdout }}"
 
 - name: "Ansible | Modifying postgres.hcl"
   template:
     src: postgres.hcl.j2
     dest: "/etc/consul.d/postgres.hcl"
-    owner: consul
-    group: consul
-
-- name: "Ansible | Modifying webserver.hcl"
-  template:
-    src: webserver.hcl.j2
-    dest: "/etc/consul.d/webserver.hcl"
     owner: consul
     group: consul
   notify:
