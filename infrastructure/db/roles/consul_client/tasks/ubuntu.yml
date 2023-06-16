@@ -63,7 +63,7 @@
 
 - name: print var PRIVATE_IP
   debug:
-    var: "{{ PRIVATE_IP.stdout }}"
+    var: PRIVATE_IP
 
 - name: "Ansible | Modifying consul.hcl"
   template:
@@ -107,12 +107,24 @@
     object: "cluster_name"
     dest: /usr/local/cluster_name.txt
 
-- name: print var EKS_CLUSTER_NAME
+- name: Store var EKS_CLUSTER_NAME
   command: "cat /usr/local/cluster_name.txt"
   register: EKS_CLUSTER_NAME
 
+- name: print var EKS_CLUSTER_NAME
+  debug: 
+    var: EKS_CLUSTER_NAME
+
 - name: "Ansible | Update k8s context"
   command: "aws eks --region={{ aws_region }} update-kubeconfig --name {{ EKS_CLUSTER_NAME.stdout }}"
+  become: false
+
+
+- name: "Ansible | Update k8s context"
+  command: "chmod o+r /home/ubuntu/.kube/config"
+  notify:
+    - Restarting consul
+    - Restarting systemd-resolved.service
 
 - name: "Ansible | Modifying postgres.hcl"
   template:
@@ -122,3 +134,4 @@
     group: consul
   notify:
     - Restarting consul
+    - Restarting systemd-resolved.service

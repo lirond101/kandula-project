@@ -47,7 +47,7 @@ module "my_ec2" {
   
   # VPC
   vpc_id                       = data.aws_vpc.selected.id
-  vpc_cidr_block               = var.vpc_cidr_block
+  vpc_cidr_block               = data.aws_vpc.selected.cidr_block
   vpc_public_subnets           = data.aws_subnets.public.ids
   vpc_private_subnets          = data.aws_subnets.private.ids
 

@@ -49,3 +49,6 @@ syncCatalog:
   default: false
 #Add filtering here for sync catalog
 
+connectInject:
+  enabled: false
+

@@ -8,12 +8,15 @@ The project is mainly built from terraform files and few more provisioning files
 # How to run?
 ## Your variables
 1. Please change the variables.tf and tfvars.tf files with your requested variables.
-2. ## Run Terraform
+2. ## Run Terraform on each:
+   1. kandula-project/infrastracture/aws/vpc
+   2. kandula-project/infrastracture/aws/ec2
+   3. kandula-project/infrastracture/aws/eks
 ```shell script
-   $ cd kandula-project/infrastracture/aws
    $ terraform init
    $ terraform apply --auto-approve
    ```
+
 3. Please replace the domain with the your own in the ingress yaml files.
 4. ## Provision
 ```shell script
@@ -36,18 +39,29 @@ The project is mainly built from terraform files and few more provisioning files
             ```shell script
                $ ssh-keyscan github.com
             
-7. Go to http://your-domain>/ and enjoy with kandula.
-8. ## SSH
+8. Configure db.
+   ```shell script
+   $ ansible-inventory -i db_aws_ec2.yml --graph
+   $ ansible-playbook playbook_postgres.yml -i db_aws_ec2.yml
+   $ ansible-playbook playbook_clients.yml -i db_aws_ec2.yml
+   ```
+
+9. Go to http://your-domain>/ and enjoy with kandula.
+10. ## SSH
 ```shell script
    $ chmod 400 your_aws_ec2_key.pem
    $ ssh-add -k ~/.ssh/your_aws_ec2_key.pem
    $ ssh -A <user>@<bastion-ip>
    $ ssh <user>@<private-instance-ip>
    ```
-9. ## Connect PostgreSQL client through SSH tunnel into db
+10. ## Connect PostgreSQL client through SSH tunnel into db
 ```shell script
    $ chmod 400 your_aws_ec2_key.pem
    $ ssh-add -k ~/.ssh/your_aws_ec2_key.pem
    $ ssh -L <local-port>:<db-server-ip-addr>:<db-port> <ssh-user>@<ssh-server-ip-addr>(:<ssh-port>)
    $ psql -p <local-port> -U <user> -d <db> -h localhost
    ```
+  Note, the above assumes we use openssh implementations (https://stackoverflow.com/questions/17846529/could-not-open-a-connection-to-your-authentication-agent)
+  if not run this:
+     $ export SSHAGENT=/usr/bin/ssh-agent
+     $ export SSHAGENTARGS="-s"

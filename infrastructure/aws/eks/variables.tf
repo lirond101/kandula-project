@@ -40,20 +40,20 @@ variable "vpc_cidr_block" {
   description = "Base CIDR Block for VPC"
 }
 
-variable "public_subnets" {
-  type = list(string)
-  description = "Desired public_subnets as list of strings"
-}
+# variable "public_subnets" {
+#   type = list(string)
+#   description = "Desired public_subnets as list of strings"
+# }
 
-variable "private_subnets" {
-  type = list(string)
-  description = "Desired private_subnets as list of strings"
-}
+# variable "private_subnets" {
+#   type = list(string)
+#   description = "Desired private_subnets as list of strings"
+# }
 
-variable "availability_zone" {
-  type = list(string)
-  description = "Desired AZs as list of strings"
-}
+# variable "availability_zone" {
+#   type = list(string)
+#   description = "Desired AZs as list of strings"
+# }
 
 variable "s3_bucket_name" {
   type = string

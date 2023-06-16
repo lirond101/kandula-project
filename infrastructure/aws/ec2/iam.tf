@@ -48,7 +48,7 @@ resource "aws_iam_role_policy" "describe_ec2" {
 }
 EOF
 }
-
+# TODO lesser all cluster to specific cluster
 resource "aws_iam_role_policy" "view_eks" {
   name = "view_k8s"
   role = aws_iam_role.allow_instance_describe_ec2.name
@@ -70,7 +70,7 @@ resource "aws_iam_role_policy" "view_eks" {
 EOF
 }
 
-resource "aws_iam_role_policy" "view_eks" {
+resource "aws_iam_role_policy" "get_obj_s3" {
   name = "get_obj_s3"
   role = aws_iam_role.allow_instance_describe_ec2.name
 
