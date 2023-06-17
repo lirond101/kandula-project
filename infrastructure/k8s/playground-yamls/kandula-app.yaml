@@ -6,28 +6,37 @@ metadata:
   labels:
     app: kandula-app
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: kandula-app
   template:
     metadata:
       labels:
+        service: kandula-svc
         app: kandula-app
     spec:
       serviceAccountName: opsschool-sa
       containers:
       - name: kandula
-        image: lirondadon/kandula:1.0.0
+        image: lirondadon/kandula:2.0.1
         ports:
         - containerPort: 5000
           name: http
           protocol: TCP
+        - containerPort: 5001
+          name: metrics
+          protocol: TCP
         env:
-        - name: FLASK_DEBUG
-          value: "1"
+        - name: FLASK_APP
+          value: "kandula-prod"
+        - name: SECRET_KEY
+          value: "kandula-prod"
         - name: AWS_DEFAULT_REGION
-          value: "us-east-2"
+          value: "us-east-1"
+        volumeMounts:
+        - name: config-vol
+          mountPath: /app/config
         resources:
           requests:
             memory: "64Mi"
@@ -39,18 +48,35 @@ spec:
           httpGet:
             path: /health
             port: 5000
-          initialDelaySeconds: 90
-          periodSeconds: 10
-          timeoutSeconds: 5
-          failureThreshold: 5
+          initialDelaySeconds: 180
+          periodSeconds: 15
+          timeoutSeconds: 10
+          failureThreshold: 10
         readinessProbe:
           httpGet:
             path: /health
             port: 5000
           initialDelaySeconds: 60
-          periodSeconds: 10
-          timeoutSeconds: 5
-          failureThreshold: 3
+          periodSeconds: 15
+          timeoutSeconds: 10
+          failureThreshold: 5
+      volumes:
+      - name: config-vol
+        configMap:
+          name: kandula-config
+      topologySpreadConstraints:
+      - maxSkew: 1
+        topologyKey: zone
+        whenUnsatisfiable: ScheduleAnyway
+        labelSelector:
+          matchLabels:
+            app: kandula-app
+      - maxSkew: 1
+        topologyKey: node
+        whenUnsatisfiable: ScheduleAnyway
+        labelSelector:
+          matchLabels:
+            app: kandula-app
 
 
 ---
@@ -58,12 +84,20 @@ apiVersion: v1
 kind: Service
 metadata:
   name: kandula-svc
-  namespace: kandula
+  namespace: default
   labels:
+     operated-prometheus: "true"
+  annotations:
+    prometheus.io/scrape: "true"
 spec:
   ports:
-  - port: 5000
+  - name: http
+    port: 5000
     targetPort: 5000
+    protocol: TCP
+  - name: metrics
+    port: 5001
+    targetPort: 5001
     protocol: TCP
   selector:
     app: kandula-app
@@ -72,13 +106,12 @@ spec:
 kind: ConfigMap 
 apiVersion: v1 
 metadata:
-  name: kandula-conf
+  name: kandula-config
   namespace: kandula
 data:
-  LOG_LEVEL: info
-  app/database.ini: | 
+  appconfig.ini: |
     [postgresql]
-    host=127.0.0.1
+    host=postgreSQL.service.consul
     database=opsschool
     user=admin
     password=Passw0rd
