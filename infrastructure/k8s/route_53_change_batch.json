@@ -4,7 +4,7 @@
         {
             "Action": "UPSERT",
             "ResourceRecordSet": {
-                "Name": "jenkins.lirondadon.link.",
+                "Name": "jenkins-k8s.lirondadon.link.",
                 "Type": "CNAME",
                 "TTL": 300,
                 "ResourceRecords": [
@@ -31,19 +31,6 @@
             "Action": "UPSERT",
             "ResourceRecordSet": {
                 "Name": "kibana.lirondadon.link.",
-                "Type": "CNAME",
-                "TTL": 300,
-                "ResourceRecords": [
-                    {
-                        "Value": "google.com"
-                    }
-                ]
-            }
-        },
-        {
-            "Action": "UPSERT",
-            "ResourceRecordSet": {
-                "Name": "elasticsearch.lirondadon.link.",
                 "Type": "CNAME",
                 "TTL": 300,
                 "ResourceRecords": [

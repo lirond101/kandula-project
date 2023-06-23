@@ -2,10 +2,12 @@
 kubectl delete ingress kandula-ingress -n kandula
 kubectl delete ingress jenkins-ingress -n jenkins
 
+INGRESS_LB_CNAME=$(kubectl get ingress jenkins-ingress -o jsonpath="{.status.loadBalancer.ingress[0].hostname}" -n jenkins)
+sed -i "s/$INGRESS_LB_CNAME/google.com/" route_53_change_batch.json
 kubectl delete -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.7.0/deploy/static/provider/aws/deploy.yaml
 
-kubectl delete -f kandula-app.yaml
-kubectl delete -f jenkins-app.yaml
+kubectl delete -f kandula/kandula-app.yaml
+kubectl delete -f jenkins/jenkins-app.yaml
 
 kubectl delete namespace jenkins
 kubectl delete namespace kandula
@@ -21,4 +23,4 @@ helm uninstall elasticsearch -n elastic
 helm uninstall filebeat -n elastic
 kubectl delete ns elastic
 
-sed -i "s/$INGRESS_LB_CNAME/google.com/" route_53_change_batch.json
+helm uninstall cert-manager -n cert-manager

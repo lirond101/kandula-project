@@ -57,7 +57,7 @@ kubectl -n jenkins describe secrets sa-jenkins
 
 #ROUTE-53
 INGRESS_LB_CNAME=$(kubectl get ingress jenkins-ingress -o jsonpath="{.status.loadBalancer.ingress[0].hostname}" -n jenkins)
-export INGRESS_LB_CNAME=$INGRESS_LB_CNAME
+# export INGRESS_LB_CNAME=$INGRESS_LB_CNAME
 sed -i "s/google.com/$INGRESS_LB_CNAME/" route_53_change_batch.json
 aws route53 change-resource-record-sets --hosted-zone-id Z01928206842WG4H1R0U --change-batch file://route_53_change_batch.json
 

@@ -3,8 +3,15 @@ kind: Ingress
 metadata:
   name: kandula-ingress
   namespace: kandula
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/default-backend: kandula-svc
 spec:
   ingressClassName: nginx
+  tls:
+    - hosts:
+      - kandula.lirondadon.link
+      secretName: echo-tls
   rules:
   - host: kandula.lirondadon.link
     http:
@@ -13,6 +20,6 @@ spec:
           service:
             name: kandula-svc
             port:
-              number: 5000
+              number: 80
         path: /
         pathType: Prefix
