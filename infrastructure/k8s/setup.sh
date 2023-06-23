@@ -63,7 +63,8 @@ CONSUL_DNS=$(kubectl get svc consul-dns -n consul -o jsonpath="{.spec.clusterIP}
 echo "CONSUL_DNS = $CONSUL_DNS"
 
 #TODO update here route_53_change_batch.json with jq eith the values of INGRESS_LB_CNAME and the record
-#aws route53 change-resource-record-sets --hosted-zone-id Z01928206842WG4H1R0U --change-batch file://route_53_change_batch.json
+sed -i "s/google.com/$INGRESS_LB_CNAME/" route_53_change_batch.json
+aws route53 change-resource-record-sets --hosted-zone-id Z01928206842WG4H1R0U --change-batch file://route_53_change_batch.json
 
 sed "s/x.x.x.x/$CONSUL_DNS/" consul/corefile.json | kubectl apply -f -
 
@@ -71,3 +72,9 @@ helm repo add prometheus-community https://prometheus-community.github.io/helm-c
 helm repo add stable https://charts.helm.sh/stable
 helm repo update
 helm install prometheus prometheus-community/kube-prometheus-stack --create-namespace --namespace monitoring
+
+helm repo add elastic https://Helm.elastic.co
+kubectl create ns elastic
+helm install elasticsearch elastic/elasticsearch --values elk/elasticsearch/values.yaml --namespace elastic --version "7.17.3"
+helm install filebeat elastic/filebeat --values elk/filebeat/values.yaml --namespace elastic --version "7.17.3"
+helm install kibana elastic/kibana --values elk/kibana/values.yaml --namespace elastic --version "7.17.3"
