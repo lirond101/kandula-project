@@ -24,13 +24,6 @@ eksctl get iamidentitymapping --cluster $1 --region=$2
 #     --group system:masters \
 #     --no-duplicate-arns
 
-# CONSUL
-#TODO change key to a generated one (https://github.com/hashicorp/terraform-provider-consul/issues/48)
-kubectl create ns consul
-kubectl create secret generic consul-gossip-encryption-key --from-literal=key="uDBV4e+LbFW3019YKPxIrg==" -n consul
-helm repo add hashicorp https://helm.releases.hashicorp.com
-helm install --values consul/helm/values.yaml consul hashicorp/consul --namespace consul --version "1.1.0"
-
 #INGRESS-NGINX CONTROLLER
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.7.0/deploy/static/provider/aws/deploy.yaml
 sleep 30
@@ -38,6 +31,19 @@ kubectl wait --namespace ingress-nginx \
   --for=condition=ready pod \
   --selector=app.kubernetes.io/component=controller \
   --timeout=120s
+
+CERT-MANAGER
+helm repo add jetstack https://charts.jetstack.io
+helm install cert-manager jetstack/cert-manager --create-namespace --namespace cert-manager --version v1.12.0 --set installCRDs=true
+kubectl apply -f lets-encrypt/prod_issuer.yaml
+sleep 60
+
+# CONSUL
+#TODO change key to a generated one (https://github.com/hashicorp/terraform-provider-consul/issues/48)
+kubectl create ns consul
+kubectl create secret generic consul-gossip-encryption-key --from-literal=key="uDBV4e+LbFW3019YKPxIrg==" -n consul
+helm repo add hashicorp https://helm.releases.hashicorp.com
+helm install consul hashicorp/consul --values consul/values.yaml --namespace consul --version "1.1.0"
 
 #JENKINS
 kubectl create namespace jenkins
@@ -51,7 +57,7 @@ kubectl -n jenkins describe secrets sa-jenkins
 
 #ROUTE-53
 INGRESS_LB_CNAME=$(kubectl get ingress jenkins-ingress -o jsonpath="{.status.loadBalancer.ingress[0].hostname}" -n jenkins)
-echo "INGRESS_LB_CNAME = $INGRESS_LB_CNAME"
+export INGRESS_LB_CNAME=$INGRESS_LB_CNAME
 sed -i "s/google.com/$INGRESS_LB_CNAME/" route_53_change_batch.json
 aws route53 change-resource-record-sets --hosted-zone-id Z01928206842WG4H1R0U --change-batch file://route_53_change_batch.json
 
@@ -60,7 +66,6 @@ aws route53 change-resource-record-sets --hosted-zone-id Z01928206842WG4H1R0U --
 # kubectl apply -f kandula-ingress.yaml
 
 #CONSUL
-kubectl apply -f consul/consul-ingress.yaml
 echo "### Add Consul dns to configmap 'coredns'"
 CONSUL_DNS=$(kubectl get svc consul-dns -n consul -o jsonpath="{.spec.clusterIP}")
 echo "CONSUL_DNS = $CONSUL_DNS"
@@ -70,7 +75,9 @@ sed "s/x.x.x.x/$CONSUL_DNS/" consul/corefile.json | kubectl apply -f -
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 helm repo add stable https://charts.helm.sh/stable
 helm repo update
-helm install prometheus prometheus-community/kube-prometheus-stack --create-namespace --namespace monitoring
+helm install prometheus prometheus-community/kube-prometheus-stack --values kube-prometheus-stack/values.yaml --create-namespace --namespace monitoring
+sleep 30
+curl -X POST https://monitoring.lirondadon.link/api/dashboards/db -d @kube-prometheus-stack/grafana-dashboard.json -H "Content-Type: application/json" --user admin:prom-operator
 
 #ELK
 helm repo add elastic https://Helm.elastic.co

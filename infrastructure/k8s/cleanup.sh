@@ -1,8 +1,6 @@
 # Cleanup
 kubectl delete ingress kandula-ingress -n kandula
 kubectl delete ingress jenkins-ingress -n jenkins
-kubectl delete ingress consul-ingress -n consul
-kubectl delete ingress monitoring-ingress -n monitoring
 
 kubectl delete -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.7.0/deploy/static/provider/aws/deploy.yaml
 

@@ -4,14 +4,19 @@ metadata:
   name: jenkins-ingress
   namespace: jenkins
   annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
     nginx.ingress.kubernetes.io/rewrite-target: "/jenkins"
-    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
     nginx.ingress.kubernetes.io/configuration-snippet: |
       rewrite ^(/jenkins)$ http://$best_http_host$1/ permanent;
 spec:
   ingressClassName: nginx
+  tls:
+    - hosts:
+      - jenkins-k8s.lirondadon.link
+      secretName: echo-tls
   rules:
-  - host: devtools.lirondadon.link
+  - host: jenkins-k8s.lirondadon.link
     http:
       paths:
       - backend:
