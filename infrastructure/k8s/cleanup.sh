@@ -2,7 +2,7 @@
 kubectl delete ingress kandula-ingress -n kandula
 kubectl delete ingress jenkins-ingress -n jenkins
 kubectl delete ingress consul-ingress -n consul
-kubectl delete ingress monitoring-ingress
+kubectl delete ingress monitoring-ingress -n monitoring
 
 kubectl delete -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.7.0/deploy/static/provider/aws/deploy.yaml
 
@@ -21,7 +21,6 @@ kubectl delete ns monitoring
 helm uninstall kibana -n elastic
 helm uninstall elasticsearch -n elastic
 helm uninstall filebeat -n elastic
-
 kubectl delete ns elastic
 
 sed -i "s/$INGRESS_LB_CNAME/google.com/" route_53_change_batch.json

@@ -31,7 +31,7 @@ kubectl create secret generic consul-gossip-encryption-key --from-literal=key="u
 helm repo add hashicorp https://helm.releases.hashicorp.com
 helm install --values consul/helm/values.yaml consul hashicorp/consul --namespace consul --version "1.1.0"
 
-# NGINX INGRESS CONTROLLER
+#INGRESS-NGINX CONTROLLER
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.7.0/deploy/static/provider/aws/deploy.yaml
 sleep 30
 kubectl wait --namespace ingress-nginx \
@@ -39,40 +39,40 @@ kubectl wait --namespace ingress-nginx \
   --selector=app.kubernetes.io/component=controller \
   --timeout=120s
 
-# JENKINS
+#JENKINS
 kubectl create namespace jenkins
-kubectl apply -f jenkins-cluster-sa.yaml
-kubectl apply -f jenkins-sa-secret.yaml
-kubectl apply -f jenkins-pv-claim.yaml
-kubectl apply -f jenkins-app.yaml
-kubectl apply -f jenkins-ingress.yaml
+kubectl apply -f jenkins/jenkins-cluster-sa.yaml
+kubectl apply -f jenkins/jenkins-sa-secret.yaml
+kubectl apply -f jenkins/jenkins-pv-claim.yaml
+kubectl apply -f jenkins/jenkins-app.yaml
+kubectl apply -f jenkins/jenkins-ingress.yaml
 sleep 120
+kubectl -n jenkins describe secrets sa-jenkins
+
+#ROUTE-53
+INGRESS_LB_CNAME=$(kubectl get ingress jenkins-ingress -o jsonpath="{.status.loadBalancer.ingress[0].hostname}" -n jenkins)
+echo "INGRESS_LB_CNAME = $INGRESS_LB_CNAME"
+sed -i "s/google.com/$INGRESS_LB_CNAME/" route_53_change_batch.json
+aws route53 change-resource-record-sets --hosted-zone-id Z01928206842WG4H1R0U --change-batch file://route_53_change_batch.json
 
 # Moved into jenkins jobs
 # kubectl apply -f kandula-app.yaml
 # kubectl apply -f kandula-ingress.yaml
 
-INGRESS_LB_CNAME=$(kubectl get ingress jenkins-ingress -o jsonpath="{.status.loadBalancer.ingress[0].hostname}" -n jenkins)
-echo "INGRESS_LB_CNAME = $INGRESS_LB_CNAME"
-kubectl -n jenkins describe secrets sa-jenkins
-
-kubectl apply -f consul-ingress.yaml
-
+#CONSUL
+kubectl apply -f consul/consul-ingress.yaml
 echo "### Add Consul dns to configmap 'coredns'"
 CONSUL_DNS=$(kubectl get svc consul-dns -n consul -o jsonpath="{.spec.clusterIP}")
 echo "CONSUL_DNS = $CONSUL_DNS"
-
-#TODO update here route_53_change_batch.json with jq eith the values of INGRESS_LB_CNAME and the record
-sed -i "s/google.com/$INGRESS_LB_CNAME/" route_53_change_batch.json
-aws route53 change-resource-record-sets --hosted-zone-id Z01928206842WG4H1R0U --change-batch file://route_53_change_batch.json
-
 sed "s/x.x.x.x/$CONSUL_DNS/" consul/corefile.json | kubectl apply -f -
 
+#PROMETHEUS
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 helm repo add stable https://charts.helm.sh/stable
 helm repo update
 helm install prometheus prometheus-community/kube-prometheus-stack --create-namespace --namespace monitoring
 
+#ELK
 helm repo add elastic https://Helm.elastic.co
 kubectl create ns elastic
 helm install elasticsearch elastic/elasticsearch --values elk/elasticsearch/values.yaml --namespace elastic --version "7.17.3"
