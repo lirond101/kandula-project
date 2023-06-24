@@ -18,4 +18,4 @@ echo "Destroying terraform vpc"
 cd ~/kandula-project/infrastructure/aws/vpc/
 terraform destroy --auto-approve
 
-
+echo "done destroy resources!!"

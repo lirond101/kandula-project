@@ -45,26 +45,6 @@ kubectl create secret generic consul-gossip-encryption-key --from-literal=key="u
 helm repo add hashicorp https://helm.releases.hashicorp.com
 helm install consul hashicorp/consul --values consul/values.yaml --namespace consul --version "1.1.0"
 
-#JENKINS
-kubectl create namespace jenkins
-kubectl apply -f jenkins/jenkins-cluster-sa.yaml
-kubectl apply -f jenkins/jenkins-sa-secret.yaml
-kubectl apply -f jenkins/jenkins-pv-claim.yaml
-kubectl apply -f jenkins/jenkins-app.yaml
-kubectl apply -f jenkins/jenkins-ingress.yaml
-sleep 120
-kubectl -n jenkins describe secrets sa-jenkins
-
-#ROUTE-53
-INGRESS_LB_CNAME=$(kubectl get ingress jenkins-ingress -o jsonpath="{.status.loadBalancer.ingress[0].hostname}" -n jenkins)
-# export INGRESS_LB_CNAME=$INGRESS_LB_CNAME
-sed -i "s/google.com/$INGRESS_LB_CNAME/" route_53_change_batch.json
-aws route53 change-resource-record-sets --hosted-zone-id Z01928206842WG4H1R0U --change-batch file://route_53_change_batch.json
-
-# Moved into jenkins jobs
-# kubectl apply -f kandula-app.yaml
-# kubectl apply -f kandula-ingress.yaml
-
 #CONSUL
 echo "### Add Consul dns to configmap 'coredns'"
 CONSUL_DNS=$(kubectl get svc consul-dns -n consul -o jsonpath="{.spec.clusterIP}")
@@ -77,7 +57,6 @@ helm repo add stable https://charts.helm.sh/stable
 helm repo update
 helm install prometheus prometheus-community/kube-prometheus-stack --values kube-prometheus-stack/values.yaml --create-namespace --namespace monitoring
 sleep 30
-curl -X POST https://monitoring.lirondadon.link/api/dashboards/db -d @kube-prometheus-stack/grafana-dashboard.json -H "Content-Type: application/json" --user admin:prom-operator
 
 #ELK
 helm repo add elastic https://Helm.elastic.co
@@ -85,3 +64,28 @@ kubectl create ns elastic
 helm install elasticsearch elastic/elasticsearch --values elk/elasticsearch/values.yaml --namespace elastic --version "7.17.3"
 helm install filebeat elastic/filebeat --values elk/filebeat/values.yaml --namespace elastic --version "7.17.3"
 helm install kibana elastic/kibana --values elk/kibana/values.yaml --namespace elastic --version "7.17.3"
+
+#JENKINS
+kubectl create namespace jenkins
+kubectl apply -f jenkins/jenkins-cluster-sa.yaml
+kubectl apply -f jenkins/jenkins-sa-secret.yaml
+kubectl apply -f jenkins/jenkins-pv-claim.yaml
+kubectl apply -f jenkins/jenkins-app.yaml
+kubectl apply -f jenkins/jenkins-ingress.yaml
+sleep 120
+kubectl -n jenkins describe secrets sa-jenkins
+
+#ROUTE-53
+INGRESS_LB_CNAME=$(kubectl get ingress jenkins-ingress -o jsonpath="{.status.loadBalancer.ingress[0].hostname}" -n jenkins)
+sed -i "s/google.com/$INGRESS_LB_CNAME/" route_53_change_batch.json
+aws route53 change-resource-record-sets --hosted-zone-id Z01928206842WG4H1R0U --change-batch file://route_53_change_batch.json
+sleep 60
+
+# KANDULA
+# TODO Move as jenkins jobs
+kubectl apply -f kandula/kandula-app.yaml
+kubectl apply -f kandula/kandula-ingress.yaml
+kubectl apply -f kandula/kandula-cronjob.yaml
+kubectl apply -f kandula/kandula-monitor.yaml
+
+curl -X POST https://monitoring.lirondadon.link/api/dashboards/db -d @kube-prometheus-stack/grafana-dashboard.json -H "Content-Type: application/json" --user admin:prom-operator
