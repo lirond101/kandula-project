@@ -135,3 +135,13 @@
   notify:
     - Restarting consul
     - Restarting systemd-resolved.service
+
+- name: "Ansible | Modifying node-exporter.hcl"
+  template:
+    src: node-exporter.hcl.j2
+    dest: "/etc/consul.d/node-exporter.hcl"
+    owner: consul
+    group: consul
+  notify:
+    - Restarting consul
+    - Restarting systemd-resolved.service

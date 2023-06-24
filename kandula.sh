@@ -29,6 +29,6 @@ ansible-inventory -i db_aws_ec2.yml --graph
 ansible-playbook playbook_postgres.yml -i db_aws_ec2.yml
 ansible-playbook playbook_clients.yml -i db_aws_ec2.yml
 
-echo ""
+echo "done setup project kandula!"
 
 

@@ -52,16 +52,13 @@ $ ssh <user>@<private-instance-ip>
 ```
 ### Connect PostgreSQL client through SSH tunnel into db
 ```shell script
+$ eval "$(ssh-agent)"
+$ echo $SSH_AUTH_SOCK
 $ chmod 400 your_aws_ec2_key.pem
 $ ssh-add -k ~/.ssh/your_aws_ec2_key.pem
 $ ssh -L <local-port>:<db-server-ip-addr>:<db-port> <ssh-user>@<ssh-server-ip-addr>(:<ssh-port>)
 $ psql -p <local-port> -U <user> -d <db> -h localhost
 ```
-Note, the above assumes we use openssh implementations (https://stackoverflow.com/questions/17846529/could-not-open-a-connection-to-your-authentication-agent)
-if not run this:
-```shell script
-$ export SSHAGENT=/usr/bin/ssh-agent
-$ export SSHAGENTARGS="-s"
-```
+Note, the above assumes we use openssh implementations (https://unix.stackexchange.com/questions/48863/ssh-add-complains-could-not-open-a-connection-to-your-authentication-agent)
 
 ### Go to http://your-domain>/ and enjoy with kandula.
