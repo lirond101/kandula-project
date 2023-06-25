@@ -43,7 +43,7 @@ module "my_ec2" {
     aws_iam_instance_profile.instance_profile
   ]
   source  = "app.terraform.io/opsschool-lirondadon/ec2/aws"
-  version = "1.0.7"
+  version = "1.0.8"
   
   # VPC
   vpc_id                       = data.aws_vpc.selected.id

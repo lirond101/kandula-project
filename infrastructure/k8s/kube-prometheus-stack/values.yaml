@@ -3210,20 +3210,21 @@ prometheus:
     ## port to 2379 and allow etcd scraping provided it is running on all Kubernetes master nodes
     ##
     additionalScrapeConfigs:
-      - job_name: "node-exporter"
+      - job_name: "ec2-postgres-node-exporter"
         consul_sd_configs:
         - server: consul-server.consul.svc.cluster.local:8500
           services: 
             - nodeexporter
         relabel_configs:
-        - source_labels: [__meta_consul_tags]
-          regex: '.*,host=([^,]+),.*'
-          replacement: '${1}'
-          target_label: 'host'
-        - source_labels: [__meta_consul_tags]
-          regex: '.*,role=([^,]+),.*'
-          replacement: '${1}'
-          target_label: 'role'
+        - source_labels: [__address__]
+          action: replace
+          target_label: instance
+        - source_labels: [__meta_consul_service]
+          action: replace
+          target_label: service
+        - source_labels: [__metrics_path__]
+          action: replace
+          target_label: endpoint
           
     # - job_name: kube-etcd
     #   kubernetes_sd_configs:

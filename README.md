@@ -45,6 +45,8 @@ $ docker build -t <repo-dockerhub>/<container-name>:<tag> . --no-cache
 
 ### SSH
 ```shell script
+$ eval "$(ssh-agent)"
+$ echo $SSH_AUTH_SOCK
 $ chmod 400 your_aws_ec2_key.pem
 $ ssh-add -k ~/.ssh/your_aws_ec2_key.pem
 $ ssh -A <user>@<bastion-ip>
@@ -52,8 +54,6 @@ $ ssh <user>@<private-instance-ip>
 ```
 ### Connect PostgreSQL client through SSH tunnel into db
 ```shell script
-$ eval "$(ssh-agent)"
-$ echo $SSH_AUTH_SOCK
 $ chmod 400 your_aws_ec2_key.pem
 $ ssh-add -k ~/.ssh/your_aws_ec2_key.pem
 $ ssh -L <local-port>:<db-server-ip-addr>:<db-port> <ssh-user>@<ssh-server-ip-addr>(:<ssh-port>)

@@ -43,7 +43,7 @@ sleep 60
 kubectl create ns consul
 kubectl create secret generic consul-gossip-encryption-key --from-literal=key="uDBV4e+LbFW3019YKPxIrg==" -n consul
 helm repo add hashicorp https://helm.releases.hashicorp.com
-helm install consul hashicorp/consul --values consul/values.yaml --namespace consul --version "1.1.0"
+helm install consul hashicorp/consul --values consul/values.yaml --namespace consul --version "1.1.2"
 
 #CONSUL
 echo "### Add Consul dns to configmap 'coredns'"
@@ -56,6 +56,7 @@ helm repo add prometheus-community https://prometheus-community.github.io/helm-c
 helm repo add stable https://charts.helm.sh/stable
 helm repo update
 helm install prometheus prometheus-community/kube-prometheus-stack --values kube-prometheus-stack/values.yaml --create-namespace --namespace monitoring
+# helm upgrade prometheus prometheus-community/kube-prometheus-stack --values kube-prometheus-stack/values.yaml --namespace monitoring
 sleep 30
 
 #ELK
