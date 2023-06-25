@@ -27,6 +27,9 @@ rules:
     resources: ["events"]
     verbs: ["get","list","watch"]
   - apiGroups: [""]
+    resources: ["configmaps"]
+    verbs: ["get","list","watch"]
+  - apiGroups: [""]
     resources: 
       - services
     verbs:
@@ -62,6 +65,13 @@ rules:
   - apiGroups: ["consul.hashicorp.com"]
     resources:
       - servicedefaults
+    verbs:
+      - list
+      - get
+      - watch
+  - apiGroups: ["batch"]
+    resources:
+      - cronjobs
     verbs:
       - list
       - get

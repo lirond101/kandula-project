@@ -31,12 +31,13 @@ $ docker build -t <repo-dockerhub>/<container-name>:<tag> . --no-cache
 
       3.2. Jenkins tunnel: jenkins-svc.jenkins.svc.cluster.local:50000
 
-      3.3. Credentials of secret text - K8s jenkins service account -use the JWT which ./setup from step 4 outputs.
+      3.3. Credentials of secret text - K8s jenkins service account -use the output JWT from ./setup.sh execution.
    4. Store credentials for Jenkins pipeline:
 
-      4.1. Dockerhub  - username / password.
+      4.1. Dockerhub - add key 'dockerhub.id' of type username / password.
 
-      4.2. Github - SSH key - generate key pair and store here its private part and on Github at SSH and GPG store the public part.
+      4.2. Github - add key 'github' of type SSH Username with private key - generate a key pair and store its private part. the public part will be stored on your Github account:
+           Settings -> "SSH and GPG keys" -> Click "New SSH key".
 
       4.3. Go to global credentials and update the github known keys - I prefer to choose "provide it manually" and put there the response of:
          ```shell script

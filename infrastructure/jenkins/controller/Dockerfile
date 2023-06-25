@@ -8,9 +8,6 @@ RUN jenkins-plugin-cli -f /usr/share/jenkins/ref/jenkins-plugins.txt
 # copy seedjob
 COPY --chown=jenkins:jenkins kandula-pipeline/config.xml /usr/share/jenkins/ref/jobs/kandula-pipeline/config.xml
 
-#id_rsa.pub file will be saved at /root/.ssh/
-RUN ssh-keygen -f $HOME/.ssh/id_rsa -t rsa -N ''
-
 # allows to skip Jenkins setup wizard
 # ENV JAVA_OPTS -Djenkins.install.runSetupWizard=false
 
@@ -19,3 +16,5 @@ RUN ssh-keygen -f $HOME/.ssh/id_rsa -t rsa -N ''
 
 VOLUME /var/jenkins_home
 USER jenkins
+
+RUN ssh-keygen -f $HOME/.ssh/id_rsa -t rsa -N ''
