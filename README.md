@@ -8,8 +8,8 @@ The project is mainly built from terraform files and few more provisioning files
 ## How to run?
 ### Your variables
 Please change variables here:
- 1. Terraform - variables.tf and tfvars.tf.
- 2. Ansible playbook - path/to/ansible/role/defaults/main.yml
+ 1. Terraform: variables.tf and tfvars.tf.
+ 2. Ansible-playbook: path/to/ansible/role/defaults/main.yml
 
 ### Setup project
 ```shell script
@@ -63,3 +63,9 @@ $ psql -p <local-port> -U <user> -d <db> -h localhost
 Note, the above assumes we use openssh implementations (https://unix.stackexchange.com/questions/48863/ssh-add-complains-could-not-open-a-connection-to-your-authentication-agent)
 
 ### Go to http://your-domain>/ and enjoy with kandula.
+
+### Destroy project
+```shell script
+$ chomod +x kandula_destroy.sh
+$ ./kandula_destroy.sh
+```
