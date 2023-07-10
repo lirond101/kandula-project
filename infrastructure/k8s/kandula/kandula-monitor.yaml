@@ -1,0 +1,16 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: kandula-metrics-servicemonitor
+  namespace: kandula
+  labels:
+    release: prometheus
+    app: kandula-app
+    team: dev
+spec:
+  selector:
+    matchLabels:
+      operated-prometheus: "true"
+  endpoints:
+  - interval: 15s
+    targetPort: metrics

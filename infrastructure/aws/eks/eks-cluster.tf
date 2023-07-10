@@ -12,6 +12,16 @@ data "aws_subnets" "private" {
   }
 }
 
+data "aws_eks_cluster" "eks" {
+  depends_on = [module.eks.cluster_id]
+  name = module.eks.cluster_name
+}
+
+data "aws_eks_cluster_auth" "eks" {
+  depends_on = [module.eks.cluster_id]
+  name = module.eks.cluster_name
+}
+
 module "eks" {
   source          = "terraform-aws-modules/eks/aws"
   version         = "19.10.0"
@@ -34,7 +44,7 @@ module "eks" {
   eks_managed_node_group_defaults = {
       ami_type               = "AL2_x86_64"
       instance_types         = ["t3.medium"]
-      vpc_security_group_ids = [aws_security_group.all_worker_mgmt.id]
+      vpc_security_group_ids = [aws_security_group.all_nodes_mgmt.id]
   }
 
   eks_managed_node_groups = {
@@ -50,7 +60,7 @@ module "eks" {
       min_size     = 0
       max_size     = 6
       desired_size = 2
-      instance_types = ["t3.large"]
+      instance_types = ["t3.medium"]
     }
   }
 }

@@ -1,0 +1,8 @@
+ansible_ssh_private_key_file: ~/.ssh/kandulaKey.pem
+ansible_ssh_common_args:
+  -o ProxyCommand="ssh -W {{ groups['_db'][0] }}:22 {{ groups['_bastion'][0] }} -i ~/.ssh/kandulaKey.pem" \
+  -o ServerAliveInterval=5 \
+  -o IdentityFile=~/.ssh/kandulaKey.pem
+ansible_python_interpreter: /usr/bin/python3
+s3_bucket: kandula-opsschool-lirondadon
+aws_region: us-east-2

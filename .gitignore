@@ -22,3 +22,5 @@
 
 # .txt files
 *.txt
+
+infrastructure/k8s/route_53_change_batch.json

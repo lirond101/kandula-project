@@ -1,17 +1,11 @@
-
 apiVersion: v1
 kind: Pod
 metadata:
   labels:
     run: my-pod
   name: my-pod
-  namespace: kandula
+  namespace: default
 spec:
-  serviceAccountName: kandula-sa
-  initContainers:
-  - image: amazon/aws-cli
-    name: my-aws-cli
-    command: ['aws', 's3', 'ls', 's3://kandula9-lirondadon/']
   containers:
   - image: nginx
     name: my-pod

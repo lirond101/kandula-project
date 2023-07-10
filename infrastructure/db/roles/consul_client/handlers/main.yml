@@ -1,0 +1,17 @@
+- name: Restarting consul
+  service:
+    name: consul
+    state: restarted
+
+- name: Restarting dnsmasq
+  service:
+    name: dnsmasq
+    state: restarted
+
+- name: Restarting systemd-resolved.service
+  service:
+    name: systemd-resolved.service
+    state: restarted
+
+- name: Reloading consul
+  command: consul reload

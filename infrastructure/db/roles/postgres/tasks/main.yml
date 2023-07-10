@@ -1,0 +1,86 @@
+---
+- name: Installing dependencies
+  apt:
+    pkg:
+      - apt-transport-https
+      - ca-certificates
+      - software-properties-common
+      - gnupg-agent
+      - python3-psycopg2
+      - prometheus-node-exporter
+    state: latest
+    update_cache: true
+
+- name: Adding PostgeSQL GPG apt Key
+  apt_key:
+    url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
+    state: present
+
+- name: Linux Standard Base and Distribution information
+  command: lsb_release -sc
+  register: lsb_release
+
+- name: Adding PostgreSQL Repository
+  apt_repository:
+    repo: "deb http://apt.postgresql.org/pub/repos/apt {{ lsb_release.stdout }}-pgdg main"
+    filename: "/etc/apt/sources.list.d/pgdg.list"
+    state: present
+
+- name: Install PostgreSQL
+  apt:
+    pkg:
+      - postgresql-{{ postgres_version }}
+    update_cache: true
+    state: latest
+
+- name: Ensure the PostgreSQL service is running
+  service:
+    name: postgresql 
+    state: started 
+    enabled: yes
+
+- name: Create the database specified in vars
+  become: yes
+  become_user: postgres
+  community.postgresql.postgresql_db:
+    name: "{{ db_name }}"
+    template: 'template0'
+    state: present
+
+- name: Ensure user has access to the new database
+  become: true
+  become_user: postgres
+  community.postgresql.postgresql_user: 
+    db: "{{ db_name }}"
+    name: "{{ db_user }}"
+    password: "{{ db_password }}"
+    role_attr_flags: CREATEDB,CREATEROLE,SUPERUSER
+    state: present
+
+- name: "Ansible | Modifying opsschool_db.sql"
+  template:
+    src: opsschool_db.sql.j2
+    dest: "/tmp/opsschool_db.sql"
+    owner: postgres
+    group: postgres
+
+- name: Add data to our database
+  become: true
+  become_user: postgres
+  shell: psql {{ db_name }} < /tmp/opsschool_db.sql
+
+- name: "Ansible | Modifying pg_hba.conf"
+  template:
+    src: pg_hba.conf.j2
+    dest: "/etc/postgresql/{{ postgres_version }}/main/pg_hba.conf"
+    owner: postgres
+    group: postgres
+
+- name: "Ansible | Modifying postgresql.conf"
+  template:
+    src: postgresql.conf.j2
+    dest: "/etc/postgresql/{{ postgres_version }}/main/postgresql.conf"
+    owner: postgres
+    group: postgres
+  notify:
+    - Restarting postgresql

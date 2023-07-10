@@ -1,0 +1,7 @@
+---
+- name: Play for configure consul servers and run service consul
+  hosts: _db
+  become: yes
+  remote_user: ubuntu
+  roles:
+    - consul_client

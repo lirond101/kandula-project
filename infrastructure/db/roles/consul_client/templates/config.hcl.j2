@@ -1,0 +1,13 @@
+node_name = "db"
+data_dir = "/opt/consul"
+datacenter = "opsschool"
+log_level  = "DEBUG"
+server = false
+client_addr = "0.0.0.0"
+bind_addr = "0.0.0.0"
+advertise_addr = "{{ PRIVATE_IP.stdout }}"
+retry_join = ["provider=k8s label_selector=\"app=consul,component=server\" kubeconfig=/home/ubuntu/.kube/config namespace=\"consul\""]
+encrypt = "uDBV4e+LbFW3019YKPxIrg=="
+encrypt_verify_incoming = true
+encrypt_verify_outgoing = true
+disable_keyring_file = true

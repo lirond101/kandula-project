@@ -1,0 +1,19 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: shutdown-instances-job
+  namespace: kandula
+spec:
+  schedule: "1 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: curl
+            image: radial/busyboxplus
+            imagePullPolicy: IfNotPresent
+            command:
+            - curl
+            - http://kandula-svc:5000/shutdown
+          restartPolicy: OnFailure

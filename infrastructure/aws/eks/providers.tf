@@ -28,6 +28,14 @@ terraform {
       source  = "hashicorp/template"
       version = "~> 2.2.0"
     }
+    helm = {
+      source  = "hashicorp/helm"
+      version = ">= 2.3.0"
+    }
+    kubectl = {
+      source  = "gavinbunney/kubectl"
+      version = ">= 1.11.3"
+    }
   }
   required_version = ">= 1.1.0"
   cloud {
@@ -51,20 +59,16 @@ provider "aws" {
 # # Kubernetes provider
 # # https://learn.hashicorp.com/terraform/kubernetes/provision-eks-cluster#optional-configure-terraform-kubernetes-provider
 # # To learn how to schedule deployments and services using the provider, go here: https://learn.hashicorp.com/terraform/kubernetes/deploy-nginx-kubernetes
-
-# TODO move cluster_name into s3 bucket or on the host disk.
-data "aws_eks_cluster" "eks" {
-  depends_on = [module.eks.cluster_id]
-  name = module.eks.cluster_name
-}
-
-data "aws_eks_cluster_auth" "eks" {
-  depends_on = [module.eks.cluster_id]
-  name = module.eks.cluster_name
-}
-
 provider "kubernetes" {
-  host = data.aws_eks_cluster.eks.endpoint
+  host                   = data.aws_eks_cluster.eks.endpoint
   cluster_ca_certificate = base64decode(data.aws_eks_cluster.eks.certificate_authority[0].data)
   token                  = data.aws_eks_cluster_auth.eks.token
+}
+
+provider "helm" {
+  kubernetes {
+    host                   = data.aws_eks_cluster.cluster.endpoint
+    cluster_ca_certificate = base64decode(data.aws_eks_cluster.cluster.certificate_authority.0.data)
+    token                  = data.aws_eks_cluster_auth.cluster.token
+  }
 }

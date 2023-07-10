@@ -30,7 +30,7 @@ resource "aws_iam_instance_profile" "instance_profile" {
 }
 
 resource "aws_iam_role_policy" "describe_ec2" {
-  name = "allow_all_ec2"
+  name = "allow_all_describe_ec2"
   role = aws_iam_role.allow_instance_describe_ec2.name
 
   policy = <<EOF
@@ -47,5 +47,49 @@ resource "aws_iam_role_policy" "describe_ec2" {
   ]
 }
 EOF
+}
+# TODO lesser all cluster to specific cluster
+resource "aws_iam_role_policy" "view_eks" {
+  name = "view_k8s"
+  role = aws_iam_role.allow_instance_describe_ec2.name
 
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+          "eks:AccessKubernetesApi",
+          "eks:DescribeCluster"
+      ],
+      "Resource": "arn:aws:eks:*:902770729603:cluster/*"
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy" "get_obj_s3" {
+  name = "get_obj_s3"
+  role = aws_iam_role.allow_instance_describe_ec2.name
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+          "s3:Get*",
+          "s3:List*"
+      ],
+      "Resource": [
+        "arn:aws:s3:::${var.s3_bucket_name}",
+        "arn:aws:s3:::${var.s3_bucket_name}/*"
+      ]
+    }
+  ]
+}
+EOF
 }
