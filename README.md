@@ -39,7 +39,10 @@ $ docker build -t <repo-dockerhub>/<container-name>:<tag> . --no-cache
       4.2. Github - add key 'github' of type SSH Username with private key - generate a key pair and store its private part. the public part will be stored on your Github account:
            Settings -> "SSH and GPG keys" -> Click "New SSH key".
 
-      4.3. Go to global credentials and update the github known keys - I prefer to choose "provide it manually" and put there the response of:
+      4.3. Slack - add key 'slack' of secret text type - read more details here
+      https://plugins.jenkins.io/slack/#plugin-content-creating-your-app     
+
+      4.4. Go to global credentials and update the github known keys - I prefer to choose "provide it manually" and put there the response of:
          ```shell script
             $ ssh-keyscan github.com
          ```

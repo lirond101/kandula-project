@@ -7,3 +7,4 @@ kubernetes
 github
 pipeline-stage-view
 blueocean
+slack
