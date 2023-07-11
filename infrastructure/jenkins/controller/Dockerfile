@@ -7,6 +7,7 @@ RUN jenkins-plugin-cli -f /usr/share/jenkins/ref/jenkins-plugins.txt
 
 # copy seedjob
 COPY --chown=jenkins:jenkins kandula-pipeline/config.xml /usr/share/jenkins/ref/jobs/kandula-pipeline/config.xml
+COPY --chown=jenkins:jenkins rollout-app/config.xml /usr/share/jenkins/ref/jobs/rollout-app/config.xml
 
 # allows to skip Jenkins setup wizard
 # ENV JAVA_OPTS -Djenkins.install.runSetupWizard=false
